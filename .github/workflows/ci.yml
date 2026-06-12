@@ -32,9 +32,10 @@ jobs:
       - name: Test with coverage
         run: make test-coverage
 
-      - name: Upload coverage to Codecov
+      - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: backend/coverage/lcov.info,frontend/coverage/lcov.info
           fail_ci_if_error: false
 
