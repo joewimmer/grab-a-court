@@ -6,6 +6,7 @@ import { ThemeToggle } from './ThemeToggle';
 describe('ThemeToggle', () => {
   beforeEach(() => {
     localStorage.clear();
+    localStorage.setItem(THEME_STORAGE_KEY, 'light');
     document.documentElement.setAttribute('data-bs-theme', 'light');
   });
 

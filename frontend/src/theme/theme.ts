@@ -8,7 +8,10 @@ export function getStoredTheme(): Theme {
     return stored;
   }
 
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  if (
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+  ) {
     return 'dark';
   }
 
