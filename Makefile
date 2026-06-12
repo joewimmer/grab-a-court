@@ -1,4 +1,4 @@
-.PHONY: install dev run db-seed test lint build clean help
+.PHONY: install dev run db-seed test lint build clean docker-up docker-down docker-reset-db help
 
 help:
 	@echo "Grab A Court - Country Club Tennis Reservation Demo"
@@ -11,6 +11,9 @@ help:
 	@echo "  make lint      Run lint checks"
 	@echo "  make build     Build frontend and backend"
 	@echo "  make clean     Remove build artifacts and database"
+	@echo "  make docker-up       Build and start Docker Compose stack"
+	@echo "  make docker-down     Stop Docker Compose stack"
+	@echo "  make docker-reset-db Reset demo data in the Docker volume"
 
 install:
 	npm install
@@ -35,3 +38,14 @@ build:
 
 clean:
 	rm -rf backend/dist frontend/dist database/grab-a-court.db
+
+docker-up:
+	docker compose up --build -d
+
+docker-down:
+	docker compose down
+
+docker-reset-db:
+	docker compose stop backend
+	docker compose run --rm -e SEED_RESET=true seed
+	docker compose start backend
