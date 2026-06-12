@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Wait for Backend",
+      "type": "shell",
+      "command": "for i in $(seq 1 60); do curl -sf http://localhost:3001/api/health >/dev/null && echo 'Backend is up' && exit 0; sleep 0.5; done; echo 'Backend not detected, continuing anyway'; exit 0",
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Vite Dev Server",
+      "type": "shell",
+      "command": "npm run dev -w frontend",
+      "isBackground": true,
+      "dependsOn": "Wait for Backend",
+      "dependsOrder": "sequence",
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": {
+          "regexp": "^.*$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*VITE.*",
+          "endsPattern": ".*Local:.*http://localhost:5173.*"
+        }
+      }
+    }
+  ]
+}

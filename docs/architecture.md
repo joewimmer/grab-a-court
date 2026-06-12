@@ -2,7 +2,7 @@
 
 ## Overview
 
-Grab A Court is a monorepo demo application that models a production SDLC workflow for a country club tennis court reservation system.
+Grab A Court is a monorepo demo application that models a production SDLC workflow for a tennis club court reservation system.
 
 ```mermaid
 flowchart LR

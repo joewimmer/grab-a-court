@@ -4,7 +4,7 @@ Use this script to walk customers through the full SDLC lifecycle demonstrated b
 
 ## 1. Requirements (2 min)
 
-"We built a country club tennis court reservation system. Members can book one of eight courts, view live availability, and admins can manage court maintenance."
+"We built a tennis club court reservation system. Members can book one of eight courts, view live availability, and admins can manage court maintenance."
 
 Key requirements covered:
 - Eight tennis courts with live status
