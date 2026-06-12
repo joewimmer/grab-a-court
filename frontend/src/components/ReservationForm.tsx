@@ -1,21 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
-import type { CourtStatusView, CreateReservationInput } from '../types';
+import type { CourtStatusView, CreateReservationInput, Reservation } from '../types';
+import {
+  getAvailableEndTimes,
+  getAvailableStartTimes,
+} from '../utils/bookingSlots';
 
 interface ReservationFormProps {
   courts: CourtStatusView[];
+  reservations: Reservation[];
   selectedDate: string;
   onSubmit: (input: CreateReservationInput) => Promise<void>;
 }
 
-const TIME_SLOTS = [
-  '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
-  '13:00', '14:00', '15:00', '16:00', '17:00', '18:00',
-  '19:00', '20:00', '21:00',
-];
-
 export function ReservationForm({
   courts,
+  reservations,
   selectedDate,
   onSubmit,
 }: ReservationFormProps) {
@@ -26,6 +26,90 @@ export function ReservationForm({
   const [submitting, setSubmitting] = useState(false);
 
   const availableCourts = courts.filter((c) => c.status === 'available');
+  const selectedCourtId = courtId ? Number(courtId) : null;
+
+  const availableStartTimes = useMemo(() => {
+    if (!selectedCourtId) return [];
+    return getAvailableStartTimes(selectedCourtId, selectedDate, reservations);
+  }, [selectedCourtId, selectedDate, reservations]);
+
+  const availableEndTimes = useMemo(() => {
+    if (!selectedCourtId) return [];
+    return getAvailableEndTimes(
+      selectedCourtId,
+      startTime,
+      selectedDate,
+      reservations,
+    );
+  }, [selectedCourtId, startTime, selectedDate, reservations]);
+
+  useEffect(() => {
+    if (!selectedCourtId || availableStartTimes.length === 0) {
+      return;
+    }
+
+    if (!availableStartTimes.includes(startTime)) {
+      const nextStart = availableStartTimes[0];
+      setStartTime(nextStart);
+      const ends = getAvailableEndTimes(
+        selectedCourtId,
+        nextStart,
+        selectedDate,
+        reservations,
+      );
+      setEndTime(ends[0] ?? '');
+      return;
+    }
+
+    if (!availableEndTimes.includes(endTime)) {
+      setEndTime(availableEndTimes[0] ?? '');
+    }
+  }, [
+    selectedCourtId,
+    availableStartTimes,
+    availableEndTimes,
+    startTime,
+    endTime,
+    selectedDate,
+    reservations,
+  ]);
+
+  function handleCourtChange(nextCourtId: string) {
+    setCourtId(nextCourtId);
+    if (!nextCourtId) {
+      return;
+    }
+
+    const starts = getAvailableStartTimes(
+      Number(nextCourtId),
+      selectedDate,
+      reservations,
+    );
+    const nextStart = starts[0] ?? '';
+    setStartTime(nextStart);
+    const ends = getAvailableEndTimes(
+      Number(nextCourtId),
+      nextStart,
+      selectedDate,
+      reservations,
+    );
+    setEndTime(ends[0] ?? '');
+  }
+
+  function handleStartChange(nextStart: string) {
+    setStartTime(nextStart);
+    if (!selectedCourtId) {
+      return;
+    }
+
+    const ends = getAvailableEndTimes(
+      selectedCourtId,
+      nextStart,
+      selectedDate,
+      reservations,
+    );
+    setEndTime(ends[0] ?? '');
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -47,11 +131,19 @@ export function ReservationForm({
     }
   }
 
+  const noAvailableSlots =
+    selectedCourtId !== null && availableStartTimes.length === 0;
+
   return (
     <Form onSubmit={handleSubmit}>
       {error && (
         <Alert variant="danger" className="mb-3">
           {error}
+        </Alert>
+      )}
+      {noAvailableSlots && (
+        <Alert variant="warning" className="mb-3">
+          This court has no open time slots for the selected date.
         </Alert>
       )}
       <Row className="g-3">
@@ -60,7 +152,7 @@ export function ReservationForm({
             <Form.Label>Court</Form.Label>
             <Form.Select
               value={courtId}
-              onChange={(e) => setCourtId(e.target.value)}
+              onChange={(e) => handleCourtChange(e.target.value)}
               required
             >
               <option value="">Select court</option>
@@ -77,9 +169,10 @@ export function ReservationForm({
             <Form.Label>Start Time</Form.Label>
             <Form.Select
               value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
+              onChange={(e) => handleStartChange(e.target.value)}
+              disabled={!selectedCourtId || noAvailableSlots}
             >
-              {TIME_SLOTS.map((slot) => (
+              {availableStartTimes.map((slot) => (
                 <option key={slot} value={slot}>
                   {slot}
                 </option>
@@ -93,8 +186,9 @@ export function ReservationForm({
             <Form.Select
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
+              disabled={!selectedCourtId || noAvailableSlots}
             >
-              {TIME_SLOTS.map((slot) => (
+              {availableEndTimes.map((slot) => (
                 <option key={slot} value={slot}>
                   {slot}
                 </option>
@@ -103,7 +197,12 @@ export function ReservationForm({
           </Form.Group>
         </Col>
       </Row>
-      <Button type="submit" variant="primary" className="mt-3" disabled={submitting}>
+      <Button
+        type="submit"
+        variant="primary"
+        className="mt-3"
+        disabled={submitting || !selectedCourtId || noAvailableSlots}
+      >
         {submitting ? 'Booking...' : 'Book Court'}
       </Button>
     </Form>
