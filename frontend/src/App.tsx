@@ -176,6 +176,7 @@ export default function App() {
                   <Card.Title>Book a Court</Card.Title>
                   <ReservationForm
                     courts={courts}
+                    reservations={reservations}
                     selectedDate={selectedDate}
                     onSubmit={handleCreateReservation}
                   />
