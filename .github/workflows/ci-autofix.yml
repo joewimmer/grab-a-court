@@ -34,6 +34,17 @@ jobs:
           FAILED_REF: ${{ github.event.workflow_run.head_branch }}
           FAILED_RUN_URL: ${{ github.event.workflow_run.html_url }}
 
+      - name: Mark high-confidence PR ready for review
+        if: ${{ steps.agent.outputs.decision == 'high' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ steps.agent.outputs.pr_url }}
+        run: |
+          gh pr ready "$PR"
+          gh pr comment "$PR" --body "Auto-fix opened **ready for review** (confidence: high).
+
+          Summary: ${{ steps.agent.outputs.summary }}"
+
       - name: Convert medium/low confidence PR to draft
         if: ${{ steps.agent.outputs.decision == 'draft' }}
         env:
