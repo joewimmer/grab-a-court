@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReservationForm } from './ReservationForm';
 import type { CourtStatusView, Reservation } from '../types';
@@ -103,6 +103,114 @@ describe('ReservationForm', () => {
       reservation_date: '2026-06-15',
       start_time: '10:00',
       end_time: '11:00',
+    });
+  });
+
+  it('shows an error when submission fails', async () => {
+    const onSubmit = vi.fn().mockRejectedValue(new Error('Court already booked'));
+
+    render(
+      <ReservationForm
+        courts={mockCourts}
+        reservations={mockReservations}
+        selectedDate="2026-06-15"
+        onSubmit={onSubmit}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+    fireEvent.click(screen.getByRole('button', { name: /book court/i }));
+
+    expect(await screen.findByText('Court already booked')).toBeInTheDocument();
+  });
+
+  it('warns and disables inputs when the court is fully booked', () => {
+    const fullDay: Reservation[] = [
+      {
+        id: 99,
+        court_id: 1,
+        member_id: 1,
+        reservation_date: '2026-06-15',
+        start_time: '07:00',
+        end_time: '21:00',
+        status: 'confirmed',
+        court_name: 'Court 1',
+        member_name: 'Alex Rivera',
+      },
+    ];
+
+    render(
+      <ReservationForm
+        courts={mockCourts}
+        reservations={fullDay}
+        selectedDate="2026-06-15"
+        onSubmit={vi.fn()}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+
+    expect(
+      screen.getByText('This court has no open time slots for the selected date.'),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /book court/i })).toBeDisabled();
+  });
+
+  it('resets selection when the court is deselected', () => {
+    render(
+      <ReservationForm
+        courts={mockCourts}
+        reservations={mockReservations}
+        selectedDate="2026-06-15"
+        onSubmit={vi.fn()}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+    expect(screen.getByLabelText('Start Time')).not.toBeDisabled();
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '' } });
+    expect(screen.getByLabelText('Start Time')).toBeDisabled();
+  });
+
+  it('reconciles the selected time when reservations change', async () => {
+    const { rerender } = render(
+      <ReservationForm
+        courts={mockCourts}
+        reservations={[]}
+        selectedDate="2026-06-15"
+        onSubmit={vi.fn()}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+    expect(screen.getByLabelText('Start Time')).toHaveValue('07:00');
+
+    const blockMorning: Reservation[] = [
+      {
+        id: 50,
+        court_id: 1,
+        member_id: 1,
+        reservation_date: '2026-06-15',
+        start_time: '07:00',
+        end_time: '09:00',
+        status: 'confirmed',
+        court_name: 'Court 1',
+        member_name: 'Alex Rivera',
+      },
+    ];
+
+    rerender(
+      <ReservationForm
+        courts={mockCourts}
+        reservations={blockMorning}
+        selectedDate="2026-06-15"
+        onSubmit={vi.fn()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Start Time')).not.toHaveValue('07:00');
     });
   });
 });
