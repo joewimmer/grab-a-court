@@ -42,7 +42,7 @@ function rangeOverlapsReservation(
 export function getAvailableStartTimes(
   courtId: number,
   reservations: Reservation[],
-): TimeSlot[] {
+): string[] {
   const courtReservations = getCourtReservations(courtId, reservations);
 
   return TIME_SLOTS.filter((startTime) => {
@@ -58,7 +58,7 @@ export function getAvailableEndTimes(
   courtId: number,
   startTime: string,
   reservations: Reservation[],
-): TimeSlot[] {
+): string[] {
   const courtReservations = getCourtReservations(courtId, reservations);
 
   return TIME_SLOTS.filter(

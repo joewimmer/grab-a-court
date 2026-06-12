@@ -90,6 +90,12 @@ describe('ReservationForm', () => {
     );
 
     fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText('Start Time'), {
+      target: { value: '10:00' },
+    });
+    fireEvent.change(screen.getByLabelText('End Time'), {
+      target: { value: '11:00' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /book court/i }));
 
     expect(onSubmit).toHaveBeenCalledWith({
