@@ -1,0 +1,69 @@
+:root {
+  --club-green: #1b4d3e;
+  --club-green-light: #2d6a4f;
+  --club-cream: #f8f6f1;
+  --club-gold: #c9a227;
+}
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: linear-gradient(180deg, var(--club-cream) 0%, #eef2ed 100%);
+  min-height: 100vh;
+}
+
+.brand-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  color: #fff !important;
+  letter-spacing: 0.02em;
+}
+
+.app-navbar {
+  background: linear-gradient(135deg, var(--club-green) 0%, var(--club-green-light) 100%);
+  box-shadow: 0 2px 12px rgba(27, 77, 62, 0.25);
+}
+
+.court-card {
+  border: none;
+  border-left: 4px solid var(--club-green-light);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.court-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.court-card--maintenance {
+  border-left-color: #ffc107;
+  background-color: #fffdf5;
+}
+
+.court-card--unavailable {
+  border-left-color: #dc3545;
+  background-color: #fff8f8;
+}
+
+.court-card--available {
+  border-left-color: var(--club-green-light);
+}
+
+.court-activity {
+  font-size: 0.875rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.card-title {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.btn-primary {
+  background-color: var(--club-green);
+  border-color: var(--club-green);
+}
+
+.btn-primary:hover {
+  background-color: var(--club-green-light);
+  border-color: var(--club-green-light);
+}

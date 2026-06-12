@@ -1,0 +1,47 @@
+name: Release Check
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  release-readiness:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: make install
+
+      - name: Seed database
+        run: make db-seed
+
+      - name: Production build
+        run: make build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: grab-a-court-build
+          path: |
+            backend/dist
+            frontend/dist
+          retention-days: 14
+
+      - name: Release readiness summary
+        run: |
+          echo "## Release Readiness" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Dependencies installed" >> $GITHUB_STEP_SUMMARY
+          echo "- Database seeded successfully" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend and frontend built for production" >> $GITHUB_STEP_SUMMARY
+          echo "- Build artifacts uploaded" >> $GITHUB_STEP_SUMMARY
