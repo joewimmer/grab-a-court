@@ -113,7 +113,7 @@ export default function App() {
           </Navbar.Brand>
           <div className="ms-auto d-flex align-items-center gap-3">
             <Navbar.Text className="text-white-50">
-              Oak Ridge Country Club
+              Oak Ridge Tennis Club
             </Navbar.Text>
             <ThemeToggle />
           </div>

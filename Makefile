@@ -1,7 +1,7 @@
 .PHONY: install dev run db-seed test test-coverage lint build clean docker-up docker-down docker-reset-db help
 
 help:
-	@echo "Grab A Court - Country Club Tennis Reservation Demo"
+	@echo "Grab A Court - Tennis Club Reservation Demo"
 	@echo ""
 	@echo "  make install   Install all dependencies"
 	@echo "  make dev       Run frontend and backend in development mode"

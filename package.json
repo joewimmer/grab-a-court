@@ -2,7 +2,7 @@
   "name": "grab-a-court",
   "version": "1.0.0",
   "private": true,
-  "description": "Country club tennis court reservation demo application",
+  "description": "Tennis club court reservation demo application",
   "workspaces": [
     "frontend",
     "backend"

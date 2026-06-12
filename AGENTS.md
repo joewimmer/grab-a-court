@@ -4,7 +4,7 @@ Instructions for AI agents and developers working in the **Grab A Court** reposi
 
 ## Project Summary
 
-Country club tennis court reservation demo app. Members book one of eight courts; admins manage court maintenance status. Built as a production-style SDLC example with a React Bootstrap frontend, Express API, SQLite database, Makefile workflows, and GitHub Actions CI.
+Tennis club court reservation demo app. Members book one of eight courts; admins manage court maintenance status. Built as a production-style SDLC example with a React Bootstrap frontend, Express API, SQLite database, Makefile workflows, and GitHub Actions CI.
 
 | Layer | Stack | Location |
 |-------|-------|----------|
