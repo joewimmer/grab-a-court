@@ -60,7 +60,7 @@ npm run test:coverage -w frontend
 
 Vitest collects coverage via `@vitest/coverage-v8`. Reports are written to `backend/coverage/` and `frontend/coverage/` (gitignored). CI uploads merged `lcov.info` files to [Codecov](https://codecov.io) for badges and pull request diffs.
 
-For public repositories, Codecov is free. Connect the repo at codecov.io after the first CI run uploads reports.
+Codecov is free for public repositories. Connect the repo at codecov.io, then add the repository upload token as a `CODECOV_TOKEN` GitHub Actions secret (Settings → Secrets and variables → Actions). The CI workflow passes this token to the Codecov action.
 
 ## CI Integration
 
