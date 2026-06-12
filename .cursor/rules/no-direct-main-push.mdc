@@ -1,0 +1,50 @@
+---
+description: Require feature branches and draft PRs; never push directly to main
+alwaysApply: true
+---
+
+# Branch and PR Workflow
+
+Never push commits directly to `main` or `master`. All changes must land through a pull request from a feature branch.
+
+## Before making changes
+
+1. Confirm the current branch is not `main` or `master`:
+   ```bash
+   git branch --show-current
+   ```
+2. If on `main` or `master`, create and switch to a feature branch first:
+   ```bash
+   git checkout -b cursor/<short-description>
+   ```
+   Use a descriptive slug (e.g. `cursor/add-docker-compose`, `cursor/fix-booking-overlap`).
+
+## While working
+
+- Commit only on the feature branch.
+- Do not merge, rebase onto, or push to `main` or `master` locally or remotely.
+- Do not run `git push origin main`, `git push origin master`, or `git push -u origin HEAD` when HEAD is `main` or `master`.
+
+## When changes are ready
+
+1. Push the feature branch:
+   ```bash
+   git push -u origin HEAD
+   ```
+2. Open a **draft** pull request targeting `main` using `gh pr create --draft`.
+   Create a ready-for-review PR only when the user explicitly asks (omit `--draft` in that case).
+3. Wait for CI and review before merging. Do not merge the PR unless the user explicitly asks.
+
+## Prohibited actions
+
+- `git push origin main` or `git push origin master`
+- Committing directly on `main` or `master`
+- Force-pushing to `main` or `master`
+- Merging a branch into `main` locally and pushing
+
+## If already on main with uncommitted work
+
+```bash
+git checkout -b cursor/<short-description>
+# then commit and push the new branch
+```
