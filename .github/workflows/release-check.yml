@@ -28,15 +28,6 @@ jobs:
       - name: Production build
         run: make build
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: grab-a-court-build
-          path: |
-            backend/dist
-            frontend/dist
-          retention-days: 14
-
       - name: Release readiness summary
         run: |
           echo "## Release Readiness" >> $GITHUB_STEP_SUMMARY
@@ -44,4 +35,4 @@ jobs:
           echo "- Dependencies installed" >> $GITHUB_STEP_SUMMARY
           echo "- Database seeded successfully" >> $GITHUB_STEP_SUMMARY
           echo "- Backend and frontend built for production" >> $GITHUB_STEP_SUMMARY
-          echo "- Build artifacts uploaded" >> $GITHUB_STEP_SUMMARY
+          echo "- Push a \`v*\` tag to publish a GitHub Release asset" >> $GITHUB_STEP_SUMMARY

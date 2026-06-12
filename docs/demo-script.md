@@ -60,9 +60,10 @@ make lint
 make build
 ```
 
-Show `.github/workflows/ci.yml` and `release-check.yml`:
+Show `.github/workflows/ci.yml`, `release-check.yml`, and `release.yml`:
 - Automated lint, test, and build on every PR
-- Release readiness check on main with artifact upload
+- Release readiness check on main
+- Tagged releases (`v*`) publish build assets to GitHub Releases
 
 ## 7. Deployment Readiness (1 min)
 

@@ -210,7 +210,8 @@ make build
 GitHub Actions workflows in `.github/workflows/`:
 
 - **`ci.yml`** — runs on push/PR: `make install`, `make db-seed`, `make lint`, `make test`, `make build`
-- **`release-check.yml`** — runs on `main` push or manual dispatch: production build + artifact upload
+- **`release-check.yml`** — runs on `main` push or manual dispatch: production build readiness check
+- **`release.yml`** — runs on `v*` tag push: lint, test, build, and GitHub Release asset upload
 
 CI uses Node.js 22.
 

@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: make install
+
+      - name: Lint
+        run: make lint
+
+      - name: Test
+        run: make test
+
+      - name: Seed database
+        run: make db-seed
+
+      - name: Production build
+        run: make build
+
+      - name: Package release archive
+        run: |
+          tar -czf grab-a-court-${{ github.ref_name }}.tar.gz \
+            backend/dist \
+            frontend/dist \
+            database/schema.sql
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: grab-a-court-${{ github.ref_name }}.tar.gz
