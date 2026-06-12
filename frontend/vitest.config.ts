@@ -13,7 +13,13 @@ export default defineConfig({
       reporter: ['text', 'lcov'],
       reportsDirectory: './coverage',
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.test.tsx', 'src/test/**'],
+      exclude: [
+        'src/**/*.test.tsx',
+        'src/test/**',
+        'src/main.tsx',
+        'src/vite-env.d.ts',
+        'src/types.ts',
+      ],
     },
   },
 });
