@@ -1,5 +1,7 @@
 # Grab A Court
 
+[![codecov](https://codecov.io/gh/joewimmer/grab-a-court/graph/badge.svg)](https://codecov.io/gh/joewimmer/grab-a-court)
+
 A production-style demo application for country clubs that want to let members reserve tennis courts. The app shows live status for eight courts, supports member reservations, and includes admin maintenance controls.
 
 ## Stack
@@ -28,6 +30,7 @@ make dev
 | `make run` | Build and run the app locally |
 | `make db-seed` | Create/reset and seed the SQLite database |
 | `make test` | Run all tests |
+| `make test-coverage` | Run tests and generate coverage reports |
 | `make lint` | Run lint checks |
 | `make build` | Build frontend and backend |
 

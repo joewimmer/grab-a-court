@@ -25,6 +25,7 @@ import { CourtStatusGrid } from './components/CourtStatusGrid';
 import { DemoUserSelector } from './components/DemoUserSelector';
 import { ReservationForm } from './components/ReservationForm';
 import { ReservationList } from './components/ReservationList';
+import { ThemeToggle } from './components/ThemeToggle';
 import type { CourtStatus, CourtStatusView, Member, Reservation } from './types';
 
 function todayString(): string {
@@ -110,9 +111,12 @@ export default function App() {
             <i className="bi bi-dribbble me-2" />
             Grab A Court
           </Navbar.Brand>
-          <Navbar.Text className="ms-auto text-white-50">
-            Oak Ridge Country Club
-          </Navbar.Text>
+          <div className="ms-auto d-flex align-items-center gap-3">
+            <Navbar.Text className="text-white-50">
+              Oak Ridge Country Club
+            </Navbar.Text>
+            <ThemeToggle />
+          </div>
         </Container>
       </Navbar>
 

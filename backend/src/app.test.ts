@@ -80,4 +80,105 @@ describe('API', () => {
 
     expect(response.status).toBe(403);
   });
+
+  it('requires a status when updating a court', async () => {
+    const app = createApp();
+    const response = await request(app)
+      .patch('/api/courts/1/status')
+      .set('X-Demo-User-Id', '2')
+      .send({});
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toMatch(/status is required/i);
+  });
+
+  it('returns a booking error when creating an invalid reservation', async () => {
+    const app = createApp();
+    const response = await request(app)
+      .post('/api/reservations')
+      .set('X-Demo-User-Id', '1')
+      .send({
+        court_id: 2,
+        reservation_date: '2026-06-20',
+        start_time: '11:00',
+        end_time: '12:00',
+      });
+
+    expect(response.status).toBe(409);
+    expect(response.body.error).toMatch(/maintenance/);
+  });
+
+  it('cancels a reservation via the API', async () => {
+    const app = createApp();
+    const createResponse = await request(app)
+      .post('/api/reservations')
+      .set('X-Demo-User-Id', '1')
+      .send({
+        court_id: 1,
+        reservation_date: '2026-06-21',
+        start_time: '11:00',
+        end_time: '12:00',
+      });
+
+    const reservationId = createResponse.body.reservation.id;
+    const deleteResponse = await request(app)
+      .delete(`/api/reservations/${reservationId}`)
+      .set('X-Demo-User-Id', '1');
+
+    expect(deleteResponse.status).toBe(200);
+    expect(deleteResponse.body.reservation.status).toBe('cancelled');
+  });
+
+  it('returns 404 when cancelling an unknown reservation', async () => {
+    const app = createApp();
+    const response = await request(app)
+      .delete('/api/reservations/999')
+      .set('X-Demo-User-Id', '1');
+
+    expect(response.status).toBe(404);
+  });
+
+  it('requires the demo user header on mutating requests', async () => {
+    const app = createApp();
+    const response = await request(app)
+      .post('/api/reservations')
+      .send({
+        court_id: 1,
+        reservation_date: '2026-06-20',
+        start_time: '11:00',
+        end_time: '12:00',
+      });
+
+    expect(response.status).toBe(401);
+  });
+
+  it('rejects a non-numeric demo user header', async () => {
+    const app = createApp();
+    const response = await request(app)
+      .post('/api/reservations')
+      .set('X-Demo-User-Id', 'abc')
+      .send({
+        court_id: 1,
+        reservation_date: '2026-06-20',
+        start_time: '11:00',
+        end_time: '12:00',
+      });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('rejects an unknown demo user', async () => {
+    const app = createApp();
+    const response = await request(app)
+      .post('/api/reservations')
+      .set('X-Demo-User-Id', '999')
+      .send({
+        court_id: 1,
+        reservation_date: '2026-06-20',
+        start_time: '11:00',
+        end_time: '12:00',
+      });
+
+    expect(response.status).toBe(404);
+  });
 });

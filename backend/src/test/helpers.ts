@@ -4,7 +4,10 @@ import { fileURLToPath } from 'node:url';
 import { closeDatabase, getDatabase, initializeSchema } from '../db/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const testDbPath = path.join(__dirname, '../../test-grab-a-court.db');
+// Each vitest worker runs in its own process; give each a distinct database
+// file so parallel test files do not clobber a shared SQLite file.
+const workerId = process.env.VITEST_WORKER_ID ?? String(process.pid);
+const testDbPath = path.join(__dirname, `../../test-grab-a-court-${workerId}.db`);
 
 export function setupTestDatabase(): void {
   process.env.DATABASE_PATH = testDbPath;
