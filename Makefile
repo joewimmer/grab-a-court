@@ -1,4 +1,4 @@
-.PHONY: install dev run db-seed test lint build clean docker-up docker-down docker-reset-db help
+.PHONY: install dev run db-seed test test-coverage lint build clean docker-up docker-down docker-reset-db help
 
 help:
 	@echo "Grab A Court - Country Club Tennis Reservation Demo"
@@ -7,7 +7,8 @@ help:
 	@echo "  make dev       Run frontend and backend in development mode"
 	@echo "  make run       Build and run the app locally"
 	@echo "  make db-seed   Create/reset and seed the SQLite database"
-	@echo "  make test      Run all tests"
+	@echo "  make test           Run all tests"
+	@echo "  make test-coverage  Run tests with coverage reports"
 	@echo "  make lint      Run lint checks"
 	@echo "  make build     Build frontend and backend"
 	@echo "  make clean     Remove build artifacts and database"
@@ -29,6 +30,9 @@ db-seed:
 
 test:
 	npm run test
+
+test-coverage:
+	npm run test:coverage
 
 lint:
 	npm run lint

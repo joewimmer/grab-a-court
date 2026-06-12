@@ -35,7 +35,8 @@ make install     # Install dependencies (root + workspaces)
 make db-seed     # Reset and seed SQLite database
 make dev         # Seed DB, then run frontend + backend in dev mode
 make run         # Build, seed DB, then run in production-like mode
-make test        # Run backend and frontend tests
+make test            # Run backend and frontend tests
+make test-coverage   # Run tests with coverage reports
 make lint        # TypeScript checks (backend + frontend)
 make build       # Production build for both apps
 make clean       # Remove build artifacts and database file
@@ -209,7 +210,7 @@ make build
 
 GitHub Actions workflows in `.github/workflows/`:
 
-- **`ci.yml`** — runs on push/PR: `make install`, `make db-seed`, `make lint`, `make test`, `make build`
+- **`ci.yml`** — runs on push/PR: `make install`, `make db-seed`, `make lint`, `make test-coverage` (Codecov upload), `make build`
 - **`release-check.yml`** — runs on `main` push or manual dispatch: production build readiness check
 - **`release.yml`** — runs on `v*` tag push: lint, test, build, and GitHub Release asset upload
 
