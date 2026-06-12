@@ -2,7 +2,7 @@
 
 [![codecov](https://codecov.io/gh/joewimmer/grab-a-court/graph/badge.svg)](https://codecov.io/gh/joewimmer/grab-a-court)
 
-A production-style demo application for country clubs that want to let members reserve tennis courts. The app shows live status for eight courts, supports member reservations, and includes admin maintenance controls.
+A production-style demo application for tennis clubs that want to let members reserve courts. The app shows live status for eight courts, supports member reservations, and includes admin maintenance controls.
 
 ## Stack
 
