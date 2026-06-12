@@ -43,7 +43,7 @@ export function validateTimeRange(startTime: string, endTime: string): void {
     throw new BookingError('End time must be after start time.');
   }
 
-  if (start < open && end > close) {
+  if (start < open || end > close) {
     throw new BookingError(
       `Reservations must be between ${OPERATING_HOURS.open} and ${OPERATING_HOURS.close}.`,
     );
