@@ -225,6 +225,16 @@ CI uses Node.js 22.
 6. **Do not edit** plan files in `.cursor/plans/` unless explicitly asked.
 7. **Only create git commits** when the user explicitly requests them.
 
+## Cursor Cloud specific instructions
+
+The update script for Cloud Agent VMs runs `npm install` from the repo root (installs both workspaces). Dependencies are pre-installed before each session; do not re-run install unless dependencies changed. Database seeding, builds, and service startup are NOT part of the update script — run them yourself when needed.
+
+Non-obvious caveats discovered during setup:
+
+- **`make test` is flaky due to a shared test DB race.** Both backend test files (`backend/src/app.test.ts`, `backend/src/services/bookingService.test.ts`) use the same SQLite file (`backend/test-grab-a-court.db`). Vitest runs files in parallel by default, so the two workers collide and intermittently fail with `attempt to write a readonly database` or `disk I/O error`. Run backend tests serially for reliability: `npm run test -w backend -- --no-file-parallelism` (all 12 backend tests pass). Frontend tests (`npm run test -w frontend`, 5 tests) are unaffected. The frontend tests emit React `act(...)` warnings that are non-fatal.
+- **SQLite experimental warning is expected.** `node:sqlite` prints `ExperimentalWarning: SQLite is an experimental feature` on every backend/seed run. This is harmless and not an error.
+- **Running the app:** `make dev` seeds the DB then starts both servers (backend `http://localhost:3001`, frontend `http://localhost:5173`; Vite proxies `/api` to the backend). There is no real auth — the frontend sends the selected demo user via the `X-Demo-User-Id` header. To smoke-test the API directly: `curl http://localhost:3001/api/health`.
+
 ## Additional Documentation
 
 - [README.md](README.md) — quick start and overview
