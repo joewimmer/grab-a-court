@@ -30,7 +30,7 @@ Use exactly these sections:
 
 - If the work closes a Linear ticket, add `Resolves ABC-123` on its own line under Summary.
 - If schema or seed changed, add a bullet noting both `database/schema.sql` and `backend/scripts/seed.ts` were updated together.
-- For UI changes, add manual verification under Test plan (e.g. `make dev`, book/cancel flow).
+- For UI changes, add manual verification under Test plan (e.g. `make dev`, book/cancel flow) and a `## Screenshots` section with before-and-after images in the PR description when possible.
 
 ## Creating the PR
 
