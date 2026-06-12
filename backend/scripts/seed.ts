@@ -1,4 +1,18 @@
-import { resetDatabase, getDatabase } from '../src/db/index.js';
+import fs from 'node:fs';
+import { resetDatabase, getDatabase, getDbPath } from '../src/db/index.js';
+
+function isSeeded(): boolean {
+  const dbPath = getDbPath();
+  if (!fs.existsSync(dbPath)) {
+    return false;
+  }
+
+  const db = getDatabase();
+  const row = db.prepare('SELECT COUNT(*) as count FROM members').get() as {
+    count: number;
+  };
+  return row.count > 0;
+}
 
 function formatDate(offsetDays: number): string {
   const date = new Date();
@@ -7,8 +21,21 @@ function formatDate(offsetDays: number): string {
 }
 
 function seed() {
-  console.log('Resetting and seeding database...');
-  resetDatabase();
+  const shouldReset = process.env.SEED_RESET !== 'false';
+
+  if (!shouldReset && isSeeded()) {
+    console.log('Database already seeded, skipping.');
+    return;
+  }
+
+  if (shouldReset) {
+    console.log('Resetting and seeding database...');
+    resetDatabase();
+  } else {
+    console.log('Seeding empty database...');
+    getDatabase();
+  }
+
   const db = getDatabase();
 
   const insertMember = db.prepare(

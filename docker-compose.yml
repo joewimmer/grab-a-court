@@ -1,0 +1,40 @@
+services:
+  seed:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+      target: seed
+    environment:
+      DATABASE_PATH: /data/grab-a-court.db
+      SEED_RESET: "false"
+    volumes:
+      - db-data:/data
+    restart: "no"
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+      target: runtime
+    environment:
+      PORT: 3001
+      DATABASE_PATH: /data/grab-a-court.db
+    volumes:
+      - db-data:/data
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  db-data:
