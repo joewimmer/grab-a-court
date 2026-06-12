@@ -1,0 +1,60 @@
+name: CI Autofix
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  autofix:
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Install SDK dependencies
+        run: npm install -D @cursor/sdk tsx
+
+      - name: Run CI autofix agent
+        id: agent
+        run: npx tsx scripts/ci-fix-agent.ts
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+          FAILED_REF: ${{ github.event.workflow_run.head_branch }}
+          FAILED_RUN_URL: ${{ github.event.workflow_run.html_url }}
+
+      - name: Convert medium/low confidence PR to draft
+        if: ${{ steps.agent.outputs.decision == 'draft' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ steps.agent.outputs.pr_url }}
+        run: |
+          gh pr ready "$PR" --undo
+          gh pr edit "$PR" --add-label needs-human
+          gh pr comment "$PR" --body "Auto-fix opened as **draft** (confidence: ${{ steps.agent.outputs.confidence }}). Review before merging.
+
+          Risk notes: ${{ steps.agent.outputs.risk_notes }}"
+
+      - name: Escalate when agent cannot fix safely
+        if: ${{ steps.agent.outputs.decision == 'escalate' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create --label needs-human \
+            --title "CI autofix could not safely fix ${{ github.event.workflow_run.head_branch }}" \
+            --body "The Cursor agent did not produce a high-confidence fix and did not change code.
+
+          Failing run: ${{ github.event.workflow_run.html_url }}
+
+          Summary: ${{ steps.agent.outputs.summary }}"
