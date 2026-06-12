@@ -30,13 +30,18 @@ export function ReservationForm({
 
   const availableStartTimes = useMemo(() => {
     if (!selectedCourtId) return [];
-    return getAvailableStartTimes(selectedCourtId, reservations);
-  }, [selectedCourtId, reservations]);
+    return getAvailableStartTimes(selectedCourtId, selectedDate, reservations);
+  }, [selectedCourtId, selectedDate, reservations]);
 
   const availableEndTimes = useMemo(() => {
     if (!selectedCourtId) return [];
-    return getAvailableEndTimes(selectedCourtId, startTime, reservations);
-  }, [selectedCourtId, startTime, reservations]);
+    return getAvailableEndTimes(
+      selectedCourtId,
+      startTime,
+      selectedDate,
+      reservations,
+    );
+  }, [selectedCourtId, startTime, selectedDate, reservations]);
 
   useEffect(() => {
     if (!selectedCourtId || availableStartTimes.length === 0) {
@@ -46,7 +51,12 @@ export function ReservationForm({
     if (!availableStartTimes.includes(startTime)) {
       const nextStart = availableStartTimes[0];
       setStartTime(nextStart);
-      const ends = getAvailableEndTimes(selectedCourtId, nextStart, reservations);
+      const ends = getAvailableEndTimes(
+        selectedCourtId,
+        nextStart,
+        selectedDate,
+        reservations,
+      );
       setEndTime(ends[0] ?? '');
       return;
     }
@@ -60,6 +70,7 @@ export function ReservationForm({
     availableEndTimes,
     startTime,
     endTime,
+    selectedDate,
     reservations,
   ]);
 
@@ -69,10 +80,19 @@ export function ReservationForm({
       return;
     }
 
-    const starts = getAvailableStartTimes(Number(nextCourtId), reservations);
+    const starts = getAvailableStartTimes(
+      Number(nextCourtId),
+      selectedDate,
+      reservations,
+    );
     const nextStart = starts[0] ?? '';
     setStartTime(nextStart);
-    const ends = getAvailableEndTimes(Number(nextCourtId), nextStart, reservations);
+    const ends = getAvailableEndTimes(
+      Number(nextCourtId),
+      nextStart,
+      selectedDate,
+      reservations,
+    );
     setEndTime(ends[0] ?? '');
   }
 
@@ -82,7 +102,12 @@ export function ReservationForm({
       return;
     }
 
-    const ends = getAvailableEndTimes(selectedCourtId, nextStart, reservations);
+    const ends = getAvailableEndTimes(
+      selectedCourtId,
+      nextStart,
+      selectedDate,
+      reservations,
+    );
     setEndTime(ends[0] ?? '');
   }
 
