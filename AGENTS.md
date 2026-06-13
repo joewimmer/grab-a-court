@@ -226,6 +226,18 @@ CI uses Node.js 22.
 6. **Do not edit** plan files in `.cursor/plans/` unless explicitly asked.
 7. **Only create git commits** when the user explicitly requests them.
 
+## Git and pull requests
+
+Repo-specific workflow lives in `.cursor/rules/` and skills — not in global user rules.
+
+| Topic | Location |
+|-------|----------|
+| Feature branches, no direct `main` pushes | `.cursor/rules/no-direct-main-push.mdc` |
+| PR title/body format and `gh pr create` | `.cursor/rules/pr-template.mdc` |
+| Commit → push → optional draft PR | `.cursor/skills/commit-push-pr/SKILL.md` |
+
+Defaults: work on `cursor/<short-description>` branches, open **draft** PRs targeting `main`, and run `make lint`, `make test`, and `make build` before shipping. Add `Resolves ABC-123` under Summary when closing a Linear ticket.
+
 ## Additional Documentation
 
 - [README.md](README.md) — quick start and overview
