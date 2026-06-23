@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CourtStatusView, Member, Reservation } from './types';
 
@@ -97,5 +97,40 @@ describe('App', () => {
     const heading = await screen.findByText('My Reservations');
     const card = heading.closest('.card') as HTMLElement;
     expect(within(card).getByText('Court 1')).toBeInTheDocument();
+  });
+
+  it('narrows the court status board when a court type filter is applied', async () => {
+    mocks.fetchCourtStatus.mockResolvedValue([
+      {
+        id: 1,
+        name: 'Court 1',
+        surface_type: 'Hard',
+        has_lighting: true,
+        status: 'available',
+        current_reservation: null,
+        upcoming_reservations: [],
+      },
+      {
+        id: 2,
+        name: 'Court 2',
+        surface_type: 'Clay',
+        has_lighting: false,
+        status: 'available',
+        current_reservation: null,
+        upcoming_reservations: [],
+      },
+    ]);
+
+    render(<App />);
+
+    const heading = await screen.findByText('Court Status Board');
+    const card = heading.closest('.card') as HTMLElement;
+    expect(within(card).getByText('Court 1')).toBeInTheDocument();
+    expect(within(card).getByText('Court 2')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText('Hard'));
+
+    expect(within(card).getByText('Court 1')).toBeInTheDocument();
+    expect(within(card).queryByText('Court 2')).not.toBeInTheDocument();
   });
 });

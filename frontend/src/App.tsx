@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Badge,
@@ -21,6 +21,8 @@ import {
   updateCourtStatus,
 } from './api/client';
 import { AdminPanel } from './components/AdminPanel';
+import { CourtFilters } from './components/CourtFilters';
+import type { LightingSelection } from './components/CourtFilters';
 import { CourtStatusGrid } from './components/CourtStatusGrid';
 import { DemoUserSelector } from './components/DemoUserSelector';
 import { ReservationForm } from './components/ReservationForm';
@@ -40,6 +42,11 @@ export default function App() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedSurfaces, setSelectedSurfaces] = useState<string[]>([]);
+  const [selectedLighting, setSelectedLighting] = useState<LightingSelection>({
+    lights: false,
+    noLights: false,
+  });
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -97,6 +104,40 @@ export default function App() {
     await updateCourtStatus(courtId, status);
     await loadData();
   }
+
+  function handleToggleSurface(surface: string) {
+    setSelectedSurfaces((prev) =>
+      prev.includes(surface)
+        ? prev.filter((s) => s !== surface)
+        : [...prev, surface],
+    );
+  }
+
+  function handleToggleLighting(key: keyof LightingSelection) {
+    setSelectedLighting((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
+
+  const surfaceTypes = useMemo(
+    () =>
+      Array.from(new Set(courts.map((c) => c.surface_type))).sort((a, b) =>
+        a.localeCompare(b),
+      ),
+    [courts],
+  );
+
+  const filteredCourts = useMemo(() => {
+    const lightingActive = selectedLighting.lights || selectedLighting.noLights;
+    return courts.filter((court) => {
+      const surfaceMatch =
+        selectedSurfaces.length === 0 ||
+        selectedSurfaces.includes(court.surface_type);
+      const lightingMatch =
+        !lightingActive ||
+        (selectedLighting.lights && court.has_lighting) ||
+        (selectedLighting.noLights && !court.has_lighting);
+      return surfaceMatch && lightingMatch;
+    });
+  }, [courts, selectedSurfaces, selectedLighting]);
 
   const isAdmin = currentUser?.role === 'admin';
   const myReservations = reservations.filter(
@@ -165,7 +206,16 @@ export default function App() {
                 ) : error ? (
                   <Alert variant="danger">{error}</Alert>
                 ) : (
-                  <CourtStatusGrid courts={courts} />
+                  <>
+                    <CourtFilters
+                      surfaceTypes={surfaceTypes}
+                      selectedSurfaces={selectedSurfaces}
+                      selectedLighting={selectedLighting}
+                      onToggleSurface={handleToggleSurface}
+                      onToggleLighting={handleToggleLighting}
+                    />
+                    <CourtStatusGrid courts={filteredCourts} />
+                  </>
                 )}
               </Card.Body>
             </Card>
@@ -179,7 +229,7 @@ export default function App() {
                 <Card.Body>
                   <Card.Title>Book a Court</Card.Title>
                   <ReservationForm
-                    courts={courts}
+                    courts={filteredCourts}
                     reservations={reservations}
                     selectedDate={selectedDate}
                     onSubmit={handleCreateReservation}
