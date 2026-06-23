@@ -19,8 +19,8 @@ body {
 }
 
 .app-navbar {
-  background: linear-gradient(135deg, var(--club-green) 0%, var(--club-green-light) 100%);
-  box-shadow: 0 2px 12px rgba(27, 77, 62, 0.25);
+  background: linear-gradient(135deg, #0d1b3e 0%, #1a3a6b 100%);
+  box-shadow: 0 2px 12px rgba(13, 27, 62, 0.35);
 }
 
 .court-card {
