@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Badge,
@@ -21,12 +21,19 @@ import {
   updateCourtStatus,
 } from './api/client';
 import { AdminPanel } from './components/AdminPanel';
+import { CourtFilters } from './components/CourtFilters';
 import { CourtStatusGrid } from './components/CourtStatusGrid';
 import { DemoUserSelector } from './components/DemoUserSelector';
 import { ReservationForm } from './components/ReservationForm';
 import { ReservationList } from './components/ReservationList';
 import { ThemeToggle } from './components/ThemeToggle';
 import type { CourtStatus, CourtStatusView, Member, Reservation } from './types';
+import {
+  EMPTY_COURT_FILTERS,
+  filterCourts,
+  getSurfaceTypes,
+  type CourtFilterState,
+} from './utils/courtFilters';
 
 function todayString(): string {
   return new Date().toISOString().slice(0, 10);
@@ -38,8 +45,16 @@ export default function App() {
   const [selectedDate, setSelectedDate] = useState(todayString());
   const [courts, setCourts] = useState<CourtStatusView[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [courtFilters, setCourtFilters] =
+    useState<CourtFilterState>(EMPTY_COURT_FILTERS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const surfaceTypes = useMemo(() => getSurfaceTypes(courts), [courts]);
+  const filteredCourts = useMemo(
+    () => filterCourts(courts, courtFilters),
+    [courts, courtFilters],
+  );
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -165,7 +180,20 @@ export default function App() {
                 ) : error ? (
                   <Alert variant="danger">{error}</Alert>
                 ) : (
-                  <CourtStatusGrid courts={courts} />
+                  <>
+                    <CourtFilters
+                      surfaceTypes={surfaceTypes}
+                      filters={courtFilters}
+                      onChange={setCourtFilters}
+                    />
+                    {filteredCourts.length === 0 ? (
+                      <Alert variant="light" className="text-muted mb-0">
+                        No courts match the selected filters.
+                      </Alert>
+                    ) : (
+                      <CourtStatusGrid courts={filteredCourts} />
+                    )}
+                  </>
                 )}
               </Card.Body>
             </Card>
@@ -179,7 +207,7 @@ export default function App() {
                 <Card.Body>
                   <Card.Title>Book a Court</Card.Title>
                   <ReservationForm
-                    courts={courts}
+                    courts={filteredCourts}
                     reservations={reservations}
                     selectedDate={selectedDate}
                     onSubmit={handleCreateReservation}
