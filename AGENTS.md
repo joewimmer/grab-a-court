@@ -216,6 +216,21 @@ GitHub Actions workflows in `.github/workflows/`:
 
 CI uses Node.js 22.
 
+## Linear (Issue Tracking)
+
+This repository's work is tracked in Linear. When using the Linear MCP, scope queries and new issues to:
+
+| Field | Value |
+|-------|-------|
+| Team | `jwimmer-demos` (key `JWI`) |
+| Project | `Grab a Court` |
+
+Guidance for agents:
+
+- When looking up tickets, planning work, or creating issues for this repo, use the **`jwimmer-demos`** team and the **`Grab a Court`** project by default.
+- Reference issues by their `JWI-<number>` identifier.
+- When opening a PR that closes a ticket, add `Resolves JWI-<number>` to the PR body (see `.cursor/rules/pr-template.mdc`).
+
 ## Conventions for Agents
 
 1. **Use the Makefile** for install, seed, dev, test, lint, and build unless there is a specific reason not to.
