@@ -241,6 +241,16 @@ Guidance for agents:
 6. **Do not edit** plan files in `.cursor/plans/` unless explicitly asked.
 7. **Only create git commits** when the user explicitly requests them.
 
+## Cursor Cloud specific instructions
+
+The VM startup update script runs `npm install` (workspace root). After that, standard Makefile/npm commands work as documented above.
+
+- **Node version is fine on the snapshot:** the VM ships Node 22.14, which satisfies the `>=22.5` requirement for built-in `node:sqlite`. No nvm/version switching needed.
+- **`make dev` re-seeds the DB on every start:** it runs `db-seed` first, which drops and recreates `database/grab-a-court.db`. Any manually created reservations are wiped on restart. Use `make db-seed` directly to reset demo data.
+- **Run `make dev` as a long-lived background process** (e.g. a tmux session), not as a blocking foreground command. It launches backend (`tsx watch`, port 3001) and frontend (Vite, port 5173) together via `concurrently`. Verify with `curl http://localhost:3001/api/health` and `http://localhost:5173/`.
+- **`ExperimentalWarning: SQLite is an experimental feature` is expected noise** from `node:sqlite` and does not indicate a problem.
+- The DB file is created by seeding; it is not present until you run `make db-seed` (or `make dev`).
+
 ## Additional Documentation
 
 - [README.md](README.md) — quick start and overview
