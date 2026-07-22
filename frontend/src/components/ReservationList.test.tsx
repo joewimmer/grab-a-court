@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReservationList } from './ReservationList';
 import type { Member, Reservation } from '../types';
@@ -53,7 +53,7 @@ describe('ReservationList', () => {
     expect(screen.getByText(/09:00/)).toBeInTheDocument();
   });
 
-  it('lets the owner cancel their reservation', () => {
+  it('opens a confirmation modal instead of cancelling immediately', () => {
     const onCancel = vi.fn().mockResolvedValue(undefined);
     render(
       <ReservationList
@@ -64,10 +64,33 @@ describe('ReservationList', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-    expect(onCancel).toHaveBeenCalledWith(1);
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText('Cancel reservation?')).toBeInTheDocument();
+    expect(screen.getByText('2026-06-15')).toBeInTheDocument();
+    expect(onCancel).not.toHaveBeenCalled();
   });
 
-  it('lets an admin cancel any reservation', () => {
+  it('lets the owner cancel their reservation after confirming', async () => {
+    const onCancel = vi.fn().mockResolvedValue(undefined);
+    render(
+      <ReservationList
+        reservations={reservations}
+        currentUser={member}
+        onCancel={onCancel}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel reservation' }));
+
+    await waitFor(() => {
+      expect(onCancel).toHaveBeenCalledWith(1);
+    });
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('lets an admin cancel any reservation after confirming', async () => {
     const onCancel = vi.fn().mockResolvedValue(undefined);
     render(
       <ReservationList
@@ -78,7 +101,30 @@ describe('ReservationList', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-    expect(onCancel).toHaveBeenCalledWith(1);
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel reservation' }));
+
+    await waitFor(() => {
+      expect(onCancel).toHaveBeenCalledWith(1);
+    });
+  });
+
+  it('keeps the reservation when the user dismisses the modal', async () => {
+    const onCancel = vi.fn().mockResolvedValue(undefined);
+    render(
+      <ReservationList
+        reservations={reservations}
+        currentUser={member}
+        onCancel={onCancel}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Keep reservation' }));
+
+    expect(onCancel).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
   });
 
   it('hides the cancel button for non-owner members', () => {
