@@ -4,7 +4,7 @@ description: >-
   Start work from a Linear ticket ID: create a ticket-scoped feature branch,
   move the ticket to In Progress at the right moment, and implement (agent mode)
   or plan first then implement (plan mode). Use when the user references a Linear
-  ticket (e.g. JWI-123) to work on, or runs /linear-ticket.
+  ticket (e.g. DEM2-123) to work on, or runs /linear-ticket.
 disable-model-invocation: true
 ---
 
@@ -14,8 +14,9 @@ Turn a Linear ticket ID into running work: branch, status, and implementation. B
 
 ## Inputs
 
-- A ticket ID like `JWI-123`. If none was given, ask for it and stop.
-- Linear scope for this repo: team `jwimmer-demos` (key `JWI`), project `Grab a Court`.
+- A ticket ID like `DEM2-123`. If none was given, ask for it and stop.
+- Linear scope for this repo: team [`demos`](https://linear.app/anysphere/team/DEM2/overview) (key `DEM2`), project `Grab a Court`.
+- Demo ticket definitions live in [`demos/linear/grab-a-court.yaml`](../../demos/linear/grab-a-court.yaml). Reset the set with [`reset-enablement-demo`](../reset-enablement-demo/SKILL.md) before a new session.
 
 ## Hard rules
 
@@ -23,12 +24,13 @@ Turn a Linear ticket ID into running work: branch, status, and implementation. B
 - Move the ticket to **In Progress only when actual code/build work begins** — not while still planning.
 - Update status exactly once per transition; do not flip it back and forth.
 - Do not commit, push, open a PR, or merge unless the user asks (defer to `commit-push-pr` skill and PR rules).
+- Demo PRs are for enablement only — never merge them unless the user explicitly asks.
 
 ## Step 1 — Read the ticket
 
 Fetch the ticket so you understand scope before touching anything:
 
-- Use Linear `get_issue` with the ID (e.g. `JWI-123`).
+- Use Linear `get_issue` with the ID (e.g. `DEM2-123`).
 - Capture the title and description; use them to derive the branch slug and the plan.
 - If the ticket is already `Done`/`Canceled`, confirm with the user before proceeding.
 
@@ -39,10 +41,10 @@ Fetch the ticket so you understand scope before touching anything:
 1. Create the ticket-scoped branch (only if not already on it):
 
 ```bash
-git checkout -b cursor/jwi-123-<short-slug>
+git checkout -b cursor/dem2-123-<short-slug>
 ```
 
-Lowercase the ID, derive `<short-slug>` from the title (e.g. `cursor/jwi-142-fix-booking-overlap`).
+Lowercase the ID, derive `<short-slug>` from the title (e.g. `cursor/dem2-9-prevent-past-dates`).
 
 2. Move the ticket to **In Progress** (see Step 3). Do this as work begins.
 3. Implement the change, matching repo patterns (routes → services → repositories).
@@ -57,10 +59,10 @@ Lowercase the ID, derive `<short-slug>` from the title (e.g. `cursor/jwi-142-fix
 When implementation begins, transition the ticket once:
 
 - Use Linear `save_issue` with `id` = ticket ID and `state` = `In Progress`.
-- If unsure of the exact status name, call `list_issue_statuses` with `team: "jwimmer-demos"` and pick the `started`-type status.
+- If unsure of the exact status name, call `list_issue_statuses` with `team: "DEM2"` and pick the `started`-type status.
 
 ```text
-save_issue({ id: "JWI-123", state: "In Progress" })
+save_issue({ id: "DEM2-123", state: "In Progress" })
 ```
 
 Confirm the transition succeeded before continuing to implement.
@@ -69,26 +71,30 @@ Confirm the transition succeeded before continuing to implement.
 
 - Build the change on the feature branch.
 - Run `make lint` / `make test` as appropriate for the change.
-- When done, summarize what changed and which ticket/branch it maps to. Leave committing, pushing, and PR creation to the user (use `commit-push-pr`). When that PR is opened, include `Resolves JWI-123` in the body per `.cursor/rules/link-linear` and `pr-template.mdc`.
+- When done, summarize what changed and which ticket/branch it maps to. Leave committing, pushing, and PR creation to the user (use `commit-push-pr`). When that PR is opened, include `Resolves DEM2-123` in the body per `.cursor/rules/pr-template.mdc`.
 
 ## Examples
 
 ### Agent mode, fresh start
 
-1. User: `/linear-ticket JWI-142`
-2. `get_issue JWI-142` → "Fix booking overlap validation"
-3. `git checkout -b cursor/jwi-142-fix-booking-overlap`
-4. `save_issue({ id: "JWI-142", state: "In Progress" })`
-5. Implement in `backend/src/services/bookingService.ts`, run tests, report.
+1. User: `/linear-ticket DEM2-9`
+2. `get_issue DEM2-9` → "Prevent selecting past reservation dates"
+3. `git checkout -b cursor/dem2-9-prevent-past-dates`
+4. `save_issue({ id: "DEM2-9", state: "In Progress" })`
+5. Implement in `frontend/src/App.tsx`, run tests, report.
 
 ### Plan mode
 
-1. User in plan mode: `/linear-ticket JWI-155`
-2. `get_issue JWI-155` → read scope
+1. User in plan mode: `/linear-ticket DEM2-5`
+2. `get_issue DEM2-5` → read scope
 3. Present a plan. **No** status change, **no** branch yet.
-4. User approves and switches to build → create `cursor/jwi-155-<slug>`, set `In Progress`, implement.
+4. User approves and switches to build → create `cursor/dem2-5-confirm-cancel`, set `In Progress`, implement.
 
 ### Already on the branch
 
-1. `git branch --show-current` → `cursor/jwi-142-fix-booking-overlap`
+1. `git branch --show-current` → `cursor/dem2-9-prevent-past-dates`
 2. Skip branch creation; ensure status is `In Progress`; continue implementing.
+
+## Session reset
+
+Before a new enablement session, run [`reset-enablement-demo`](../reset-enablement-demo/SKILL.md) to cancel/recreate tickets, close demo PRs, and delete demo branches.
