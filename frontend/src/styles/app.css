@@ -67,19 +67,3 @@ body {
   background-color: var(--club-green-light);
   border-color: var(--club-green-light);
 }
-
-[data-bs-theme='dark'] body {
-  background: linear-gradient(180deg, #1a2421 0%, #121816 100%);
-}
-
-[data-bs-theme='dark'] .court-card--maintenance {
-  background-color: #2a2618;
-}
-
-[data-bs-theme='dark'] .court-card--unavailable {
-  background-color: #2a1c1c;
-}
-
-[data-bs-theme='dark'] .court-activity {
-  border-top-color: rgba(255, 255, 255, 0.1);
-}
