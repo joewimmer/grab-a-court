@@ -58,10 +58,6 @@ tickets:
       - [ ] Clicking it reloads court status and reservations for the selected date
       - [ ] Reuse the existing loading state while data refreshes
 
-      ## Implementation hint
-
-      Wire the button to the existing `loadData()` function in `frontend/src/App.tsx`.
-
   - key: confirm-cancel-reservation
     title: Confirm before canceling a reservation
     labels:
@@ -83,10 +79,6 @@ tickets:
       - [ ] Leave the reservation unchanged when the user declines
       - [ ] Add or update the component test
 
-      ## Implementation hint
-
-      Add the confirmation guard in `frontend/src/components/ReservationList.tsx`.
-
   - key: reservations-empty-state
     title: Show an empty state when no reservations exist
     labels:
@@ -107,10 +99,6 @@ tickets:
       - [ ] Continue rendering reservations normally when data exists
       - [ ] Add or update the component test
 
-      ## Implementation hint
-
-      Update `frontend/src/components/ReservationList.tsx`.
-
   - key: booking-success-message
     title: Show a success message after booking a court
     labels:
@@ -127,14 +115,6 @@ tickets:
       - [ ] Use concise copy such as `Court booked successfully.`
       - [ ] Do not show the message when booking fails
 
-      ## Implementation hint
-
-      Set success state after `handleCreateReservation` completes in `frontend/src/App.tsx` or inside `ReservationForm.tsx`.
-
-      ## Demo scope
-
-      Small frontend state change with a visible result.
-
   - key: reservation-count-title
     title: Show the reservation count in the section title
     labels:
@@ -150,10 +130,6 @@ tickets:
       - [ ] Render titles such as `My Reservations (2)` and `All Reservations (5)`
       - [ ] Count only the reservations currently shown to that user
       - [ ] Display `(0)` when the list is empty
-
-      ## Implementation hint
-
-      Use the existing `reservations` and `myReservations` arrays in `frontend/src/App.tsx`.
 
   - key: prevent-past-dates
     title: Prevent selecting past reservation dates
@@ -175,10 +151,6 @@ tickets:
       - [ ] Keep today and future dates selectable
       - [ ] Add or update a frontend test
 
-      ## Implementation hint
-
-      Use the existing `todayString()` value for the date input's `min` attribute in `frontend/src/App.tsx`.
-
   - key: navbar-operating-hours
     title: Show club operating hours in the navbar
     labels:
@@ -193,14 +165,6 @@ tickets:
 
       - [ ] Show `Open 07:00–21:00` near the club name in the navbar
       - [ ] Keep the navbar readable on desktop and mobile
-
-      ## Implementation hint
-
-      Update the navbar markup in `frontend/src/App.tsx`.
-
-      ## Demo scope
-
-      Frontend-only copy and layout change suitable for a few-minute live implementation.
 
   - key: welcome-court-count-copy
     title: Remove the hardcoded court count from welcome copy
@@ -220,14 +184,6 @@ tickets:
 
       - [ ] Replace `one of eight tennis courts` with non-numeric wording such as `one of our tennis courts`
       - [ ] Preserve the rest of the welcome message and layout
-
-      ## Implementation hint
-
-      Update the `Card.Text` copy in `frontend/src/App.tsx`.
-
-      ## Demo scope
-
-      Safe one-line copy fix.
 
   - key: admin-role-badge
     title: Make the admin role badge easier to identify
@@ -249,14 +205,6 @@ tickets:
       - [ ] Keep the member badge visually distinct
       - [ ] Preserve the current role text and responsive layout
 
-      ## Implementation hint
-
-      Update the role badge in `frontend/src/App.tsx`.
-
-      ## Demo scope
-
-      Small styling change with an obvious before/after.
-
   - key: court-surface-lighting
     title: Show surface and lighting details on court cards
     labels:
@@ -272,11 +220,3 @@ tickets:
       - [ ] Show the court surface type on each card
       - [ ] Show `Lights` or `No lights` based on `has_lighting`
       - [ ] Keep the current status badge and reservation details unchanged
-
-      ## Implementation hint
-
-      The data already exists on `CourtStatusView`; update `frontend/src/components/CourtStatusGrid.tsx`.
-
-      ## Demo scope
-
-      Frontend-only change with an immediate visual result.
