@@ -1,5 +1,5 @@
 ---
-description: Require feature branches and draft PRs; never push directly to main
+description: Require feature branches and PRs; never push directly to main
 alwaysApply: true
 ---
 
@@ -31,8 +31,8 @@ Never push commits directly to `main` or `master`. All changes must land through
    ```bash
    git push -u origin HEAD
    ```
-2. Open a **draft** pull request targeting `main` using `gh pr create --draft`.
-   Create a ready-for-review PR only when the user explicitly asks (omit `--draft` in that case).
+2. Open a pull request targeting `main` using `gh pr create`.
+   Use `--draft` only when the user explicitly asks for a draft PR.
 3. Wait for CI and review before merging. Do not merge the PR unless the user explicitly asks.
 
 ## Prohibited actions
