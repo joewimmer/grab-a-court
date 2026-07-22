@@ -12,42 +12,91 @@ When creating a pull request, use this format for the title and body.
 - Short, imperative phrase (e.g. `Add Docker Compose setup`, `Fix booking overlap validation`)
 - No period at the end
 
-## Body
 
-Use exactly these sections:
+## Description
 
-## Summary
+Summarize the changes and related issue. Include the motivation, context, and any implementation details reviewers need to understand the approach.
 
-- 1–3 bullets: what changed and why
+If the work closes an issue, include the appropriate reference:
 
-## Test plan
+`Resolves DEM2-<number>`
+
+For GitHub issues, use:
+
+`Fixes #<number>`
+
+## Type of change
+
+- [ ] Bug fix (non-breaking change that fixes an issue)
+- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Breaking change (fix or feature that changes existing behavior)
+- [ ] Documentation update
+
+## How has this been tested?
+
+Describe the tests run to verify the changes and provide enough detail for reviewers to reproduce the results.
 
 - [ ] `make lint`
 - [ ] `make test`
 - [ ] `make build`
 
-## Optional
+Add relevant manual verification steps, such as running `make dev` and exercising the affected flow.
 
-- If the work closes a Linear ticket, add `Resolves ABC-123` on its own line under Summary.
-- If schema or seed changed, add a bullet noting both `database/schema.sql` and `backend/scripts/seed.ts` were updated together.
-- For UI changes, add manual verification under Test plan (e.g. `make dev`, book/cancel flow) and a `## Screenshots` section with before-and-after images in the PR description when possible.
+## Checklist
+
+- [ ] My code follows the style guidelines of this project
+- [ ] I have performed a self-review of my changes
+- [ ] I have added comments only where the logic is not obvious
+- [ ] I have updated relevant documentation
+- [ ] My changes generate no new warnings
+- [ ] I have added or updated tests that prove the change works
+- [ ] New and existing tests pass locally
+- [ ] Any dependent changes have been merged and published
+
+## Optional additions
+
+- If schema or seed data changed, note that `database/schema.sql` and `backend/scripts/seed.ts` were updated together.
+- For UI changes, include a `## Screenshots` section with before-and-after images when possible.
+- Remove checklist items that do not apply, or mark them as not applicable with a brief explanation.
 
 ## Creating the PR
 
 ```bash
-gh pr create --draft --title "<title>" --body "$(cat <<'EOF'
-## Summary
+gh pr create --title "<title>" --body "$(cat <<'EOF'
+## Description
 
-- 
+Summarize the changes, motivation, context, and related issue.
 
-## Test plan
+Resolves DEM2-<number>
+
+## Type of change
+
+- [ ] Bug fix (non-breaking change that fixes an issue)
+- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Breaking change (fix or feature that changes existing behavior)
+- [ ] Documentation update
+
+## How has this been tested?
+
+Describe the tests run and how reviewers can reproduce the results.
 
 - [ ] `make lint`
 - [ ] `make test`
 - [ ] `make build`
+
+## Checklist
+
+- [ ] My code follows the style guidelines of this project
+- [ ] I have performed a self-review of my changes
+- [ ] I have added comments only where the logic is not obvious
+- [ ] I have updated relevant documentation
+- [ ] My changes generate no new warnings
+- [ ] I have added or updated tests that prove the change works
+- [ ] New and existing tests pass locally
+- [ ] Any dependent changes have been merged and published
 
 EOF
 )"
 ```
 
-Create a ready-for-review PR only when the user explicitly asks (omit `--draft`).
+Create pull requests as ready for review by default.
