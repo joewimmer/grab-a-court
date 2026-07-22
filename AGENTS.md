@@ -222,14 +222,13 @@ This repository's work is tracked in Linear. When using the Linear MCP, scope qu
 
 | Field | Value |
 |-------|-------|
-| Team | `jwimmer-demos` (key `JWI`) |
-| Project | `Grab a Court` |
+| Team | [`demos`](https://linear.app/anysphere/team/DEM2/overview) (key `DEM2`) |
 
 Guidance for agents:
 
-- When looking up tickets, planning work, or creating issues for this repo, use the **`jwimmer-demos`** team and the **`Grab a Court`** project by default.
-- Reference issues by their `JWI-<number>` identifier.
-- When opening a PR that closes a ticket, add `Resolves JWI-<number>` to the PR body (see `.cursor/rules/pr-template.mdc`).
+- When looking up tickets, planning work, or creating issues for this repo, use the **`demos`** team by default.
+- Reference issues by their `DEM2-<number>` identifier.
+- When opening a PR that closes a ticket, add `Resolves DEM2-<number>` to the PR body (see `.cursor/rules/pr-template.mdc`).
 
 ## Conventions for Agents
 
