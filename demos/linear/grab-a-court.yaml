@@ -1,0 +1,282 @@
+# Grab A Court enablement ticket catalog.
+# Source of truth for resetting Linear demo issues. Do not store Linear issue IDs here;
+# each reset creates fresh DEM2-<number> issues.
+
+catalog:
+  team_key: DEM2
+  team_name: demos
+  project: Grab a Court
+  project_summary: Tennis club court reservation demo app
+  project_description: Demo and enablement work for the Grab a Court tennis club reservation app.
+
+tickets:
+  - key: navbar-soccer-ball-icon
+    title: Navbar brand icon looks like a soccer ball
+    labels:
+      - Bug
+    priority: 3
+    description: |
+      ## Summary
+
+      The navbar brand icon uses Bootstrap Icons `bi-dribbble`, which renders as a soccer ball. That looks wrong for a tennis club app and confuses members during demos.
+
+      ## Steps to reproduce
+
+      1. Open the app at the home page
+      2. Look at the Grab A Court brand in the top navbar
+
+      ## Expected
+
+      The brand icon should feel tennis-related (or be removed if no suitable icon exists).
+
+      ## Actual
+
+      The brand shows a soccer-style dribbble icon.
+
+      ## Acceptance criteria
+
+      - [ ] Replace `bi-dribbble` in `frontend/src/App.tsx` with a more appropriate Bootstrap icon, or remove the icon
+      - [ ] The navbar brand still reads "Grab A Court" and remains visually balanced
+
+      ## Notes
+
+      Good live enablement ticket: frontend-only, visible before/after in under a couple of minutes.
+
+  - key: refresh-court-status-board
+    title: Add a refresh button to the court status board
+    labels:
+      - type:feature
+    priority: 4
+    description: |
+      ## Summary
+
+      Let members manually refresh court availability without reloading the whole page.
+
+      ## Acceptance criteria
+
+      - [ ] Add a `Refresh` button beside the Court Status Board heading
+      - [ ] Clicking it reloads court status and reservations for the selected date
+      - [ ] Reuse the existing loading state while data refreshes
+
+      ## Implementation hint
+
+      Wire the button to the existing `loadData()` function in `frontend/src/App.tsx`.
+
+  - key: confirm-cancel-reservation
+    title: Confirm before canceling a reservation
+    labels:
+      - Bug
+    priority: 3
+    description: |
+      ## Summary
+
+      The Cancel button immediately removes a reservation, making accidental cancellations easy.
+
+      ## Expected
+
+      Ask the member to confirm before sending the cancellation request.
+
+      ## Acceptance criteria
+
+      - [ ] Display a confirmation prompt after the user clicks Cancel
+      - [ ] Cancel only when the user confirms
+      - [ ] Leave the reservation unchanged when the user declines
+      - [ ] Add or update the component test
+
+      ## Implementation hint
+
+      Add the confirmation guard in `frontend/src/components/ReservationList.tsx`.
+
+  - key: reservations-empty-state
+    title: Show an empty state when no reservations exist
+    labels:
+      - Bug
+    priority: 3
+    description: |
+      ## Summary
+
+      The reservations panel appears blank when the selected user has no reservations, which can look like a loading or rendering failure.
+
+      ## Expected
+
+      Display a helpful message such as `No reservations for this date.`
+
+      ## Acceptance criteria
+
+      - [ ] Show an empty-state message when the reservation list is empty
+      - [ ] Continue rendering reservations normally when data exists
+      - [ ] Add or update the component test
+
+      ## Implementation hint
+
+      Update `frontend/src/components/ReservationList.tsx`.
+
+  - key: booking-success-message
+    title: Show a success message after booking a court
+    labels:
+      - type:feature
+    priority: 4
+    description: |
+      ## Summary
+
+      Provide clear confirmation after a reservation is created successfully.
+
+      ## Acceptance criteria
+
+      - [ ] Show a Bootstrap success alert after a successful booking
+      - [ ] Use concise copy such as `Court booked successfully.`
+      - [ ] Do not show the message when booking fails
+
+      ## Implementation hint
+
+      Set success state after `handleCreateReservation` completes in `frontend/src/App.tsx` or inside `ReservationForm.tsx`.
+
+      ## Demo scope
+
+      Small frontend state change with a visible result.
+
+  - key: reservation-count-title
+    title: Show the reservation count in the section title
+    labels:
+      - type:feature
+    priority: 4
+    description: |
+      ## Summary
+
+      Make the number of visible reservations clear at a glance.
+
+      ## Acceptance criteria
+
+      - [ ] Render titles such as `My Reservations (2)` and `All Reservations (5)`
+      - [ ] Count only the reservations currently shown to that user
+      - [ ] Display `(0)` when the list is empty
+
+      ## Implementation hint
+
+      Use the existing `reservations` and `myReservations` arrays in `frontend/src/App.tsx`.
+
+  - key: prevent-past-dates
+    title: Prevent selecting past reservation dates
+    labels:
+      - Bug
+    priority: 3
+    description: |
+      ## Summary
+
+      The date picker currently allows members to select dates in the past, leading to a confusing booking experience.
+
+      ## Expected
+
+      Past dates cannot be selected from the Court Status Board date input.
+
+      ## Acceptance criteria
+
+      - [ ] Set today's date as the minimum selectable date
+      - [ ] Keep today and future dates selectable
+      - [ ] Add or update a frontend test
+
+      ## Implementation hint
+
+      Use the existing `todayString()` value for the date input's `min` attribute in `frontend/src/App.tsx`.
+
+  - key: navbar-operating-hours
+    title: Show club operating hours in the navbar
+    labels:
+      - type:feature
+    priority: 4
+    description: |
+      ## Summary
+
+      Display the club's operating hours in the navbar so members can see them without starting a booking.
+
+      ## Acceptance criteria
+
+      - [ ] Show `Open 07:00–21:00` near the club name in the navbar
+      - [ ] Keep the navbar readable on desktop and mobile
+
+      ## Implementation hint
+
+      Update the navbar markup in `frontend/src/App.tsx`.
+
+      ## Demo scope
+
+      Frontend-only copy and layout change suitable for a few-minute live implementation.
+
+  - key: welcome-court-count-copy
+    title: Remove the hardcoded court count from welcome copy
+    labels:
+      - Bug
+    priority: 4
+    description: |
+      ## Summary
+
+      The welcome message says the club has exactly eight courts. That copy becomes inaccurate whenever seed data or club configuration changes.
+
+      ## Expected
+
+      Use wording that remains accurate regardless of court count.
+
+      ## Acceptance criteria
+
+      - [ ] Replace `one of eight tennis courts` with non-numeric wording such as `one of our tennis courts`
+      - [ ] Preserve the rest of the welcome message and layout
+
+      ## Implementation hint
+
+      Update the `Card.Text` copy in `frontend/src/App.tsx`.
+
+      ## Demo scope
+
+      Safe one-line copy fix.
+
+  - key: admin-role-badge
+    title: Make the admin role badge easier to identify
+    labels:
+      - Bug
+    priority: 4
+    description: |
+      ## Summary
+
+      The admin role badge is visually easy to miss, which makes it unclear why maintenance controls appear for some demo users.
+
+      ## Expected
+
+      The admin role should be immediately recognizable after selecting an admin user.
+
+      ## Acceptance criteria
+
+      - [ ] Give the admin badge a more noticeable Bootstrap variant or icon
+      - [ ] Keep the member badge visually distinct
+      - [ ] Preserve the current role text and responsive layout
+
+      ## Implementation hint
+
+      Update the role badge in `frontend/src/App.tsx`.
+
+      ## Demo scope
+
+      Small styling change with an obvious before/after.
+
+  - key: court-surface-lighting
+    title: Show surface and lighting details on court cards
+    labels:
+      - type:feature
+    priority: 4
+    description: |
+      ## Summary
+
+      Help members compare courts by showing existing surface and lighting data on each status card.
+
+      ## Acceptance criteria
+
+      - [ ] Show the court surface type on each card
+      - [ ] Show `Lights` or `No lights` based on `has_lighting`
+      - [ ] Keep the current status badge and reservation details unchanged
+
+      ## Implementation hint
+
+      The data already exists on `CourtStatusView`; update `frontend/src/components/CourtStatusGrid.tsx`.
+
+      ## Demo scope
+
+      Frontend-only change with an immediate visual result.
