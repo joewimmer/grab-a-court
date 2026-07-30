@@ -19,7 +19,7 @@ Summarize the changes and related issue. Include the motivation, context, and an
 
 If the work closes an issue, include the appropriate reference:
 
-`Resolves DEM2-<number>`
+`Resolves JOE-<number>`
 
 For GitHub issues, use:
 
@@ -67,7 +67,7 @@ gh pr create --title "<title>" --body "$(cat <<'EOF'
 
 Summarize the changes, motivation, context, and related issue.
 
-Resolves DEM2-<number>
+Resolves JOE-<number>
 
 ## Type of change
 
