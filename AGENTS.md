@@ -216,19 +216,23 @@ GitHub Actions workflows in `.github/workflows/`:
 
 CI uses Node.js 22.
 
-## Linear (Issue Tracking)
+## Jira (Issue Tracking)
 
-This repository's work is tracked in Linear. When using the Linear MCP, scope queries and new issues to:
+This repository's work is tracked in Jira. When using the Atlassian MCP, scope queries and new issues to:
 
 | Field | Value |
 |-------|-------|
-| Team | [`demos`](https://linear.app/anysphere/team/DEM2/overview) (key `DEM2`) |
+| Site | [`fe-anysphere-demo.atlassian.net`](https://fe-anysphere-demo.atlassian.net) |
+| Project | [`JOE`](https://fe-anysphere-demo.atlassian.net/browse/JOE) (Joe Wimmer Demos) |
+
+Demo ticket definitions live in [`demos/jira/grab-a-court.yaml`](demos/jira/grab-a-court.yaml). Reset the set with `/reset-enablement-demo` before a new enablement session.
 
 Guidance for agents:
 
-- When looking up tickets, planning work, or creating issues for this repo, use the **`demos`** team by default.
-- Reference issues by their `DEM2-<number>` identifier.
-- When opening a PR that closes a ticket, add `Resolves DEM2-<number>` to the PR body (see `.cursor/rules/pr-template.mdc`).
+- When looking up tickets, planning work, or creating issues for this repo, use the **`JOE`** project by default.
+- Reference issues by their `JOE-<number>` key.
+- When opening a PR that closes a ticket, add `Resolves JOE-<number>` to the PR body (see `.cursor/rules/pr-template.mdc`).
+- Start work from a ticket with `/jira-ticket JOE-<number>`.
 
 ## Conventions for Agents
 

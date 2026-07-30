@@ -1,20 +1,18 @@
 # Grab A Court enablement ticket catalog.
-# Source of truth for resetting Linear demo issues. Do not store Linear issue IDs here;
-# each reset creates fresh DEM2-<number> issues.
+# Source of truth for resetting Jira demo issues. Do not store Jira issue keys here;
+# each reset creates fresh JOE-<number> issues.
 
 catalog:
-  team_key: DEM2
-  team_name: demos
-  project: Grab a Court
-  project_summary: Tennis club court reservation demo app
-  project_description: Demo and enablement work for the Grab a Court tennis club reservation app.
+  cloud_id: fe-anysphere-demo.atlassian.net
+  site_url: https://fe-anysphere-demo.atlassian.net
+  project_key: JOE
+  project_name: Joe Wimmer Demos
 
 tickets:
   - key: navbar-soccer-ball-icon
     title: Navbar brand icon looks like a soccer ball
-    labels:
-      - Bug
-    priority: 3
+    issue_type: Bug
+    priority: Medium
     description: |
       ## Summary
 
@@ -44,9 +42,8 @@ tickets:
 
   - key: refresh-court-status-board
     title: Add a refresh button to the court status board
-    labels:
-      - type:feature
-    priority: 4
+    issue_type: Feature
+    priority: Low
     description: |
       ## Summary
 
@@ -60,9 +57,8 @@ tickets:
 
   - key: confirm-cancel-reservation
     title: Confirm before canceling a reservation
-    labels:
-      - Bug
-    priority: 3
+    issue_type: Bug
+    priority: Medium
     description: |
       ## Summary
 
@@ -81,9 +77,8 @@ tickets:
 
   - key: reservations-empty-state
     title: Show an empty state when no reservations exist
-    labels:
-      - Bug
-    priority: 3
+    issue_type: Bug
+    priority: Medium
     description: |
       ## Summary
 
@@ -101,9 +96,8 @@ tickets:
 
   - key: booking-success-message
     title: Show a success message after booking a court
-    labels:
-      - type:feature
-    priority: 4
+    issue_type: Feature
+    priority: Low
     description: |
       ## Summary
 
@@ -117,9 +111,8 @@ tickets:
 
   - key: reservation-count-title
     title: Show the reservation count in the section title
-    labels:
-      - type:feature
-    priority: 4
+    issue_type: Feature
+    priority: Low
     description: |
       ## Summary
 
@@ -133,9 +126,8 @@ tickets:
 
   - key: prevent-past-dates
     title: Prevent selecting past reservation dates
-    labels:
-      - Bug
-    priority: 3
+    issue_type: Bug
+    priority: Medium
     description: |
       ## Summary
 
@@ -153,9 +145,8 @@ tickets:
 
   - key: navbar-operating-hours
     title: Show club operating hours in the navbar
-    labels:
-      - type:feature
-    priority: 4
+    issue_type: Feature
+    priority: Low
     description: |
       ## Summary
 
@@ -168,9 +159,8 @@ tickets:
 
   - key: welcome-court-count-copy
     title: Remove the hardcoded court count from welcome copy
-    labels:
-      - Bug
-    priority: 4
+    issue_type: Bug
+    priority: Low
     description: |
       ## Summary
 
@@ -187,9 +177,8 @@ tickets:
 
   - key: admin-role-badge
     title: Make the admin role badge easier to identify
-    labels:
-      - Bug
-    priority: 4
+    issue_type: Bug
+    priority: Low
     description: |
       ## Summary
 
@@ -207,9 +196,8 @@ tickets:
 
   - key: court-surface-lighting
     title: Show surface and lighting details on court cards
-    labels:
-      - type:feature
-    priority: 4
+    issue_type: Feature
+    priority: Low
     description: |
       ## Summary
 
