@@ -246,11 +246,11 @@ Guidance for agents:
 
 ## Cursor Cloud specific instructions
 
-The VM startup update script runs `npm install` (workspace root). After that, standard Makefile/npm commands work as documented above.
+Dependencies install with `npm ci` from the lockfile. Node.js 22.14 is already on the image and satisfies the `>=22.5` requirement for built-in `node:sqlite`. No version manager is required.
 
-- **Node version is fine on the snapshot:** the VM ships Node 22.14, which satisfies the `>=22.5` requirement for built-in `node:sqlite`. No nvm/version switching needed.
-- **`make dev` re-seeds the DB on every start:** it runs `db-seed` first, which drops and recreates `database/grab-a-court.db`. Any manually created reservations are wiped on restart. Use `make db-seed` directly to reset demo data.
-- **Run `make dev` as a long-lived background process** (e.g. a tmux session), not as a blocking foreground command. It launches backend (`tsx watch`, port 3001) and frontend (Vite, port 5173) together via `concurrently`. Verify with `curl http://localhost:3001/api/health` and `http://localhost:5173/`.
+- **Dev servers start on boot:** the environment start script seeds the database, then runs `npm run dev` (API on port 3001, Vite on port 5173). If `curl -sf http://localhost:3001/api/health` and `curl -sf http://localhost:5173/` already succeed, leave that process running.
+- **Restarting dev mode re-seeds the database:** `make dev` and the boot script both run `db-seed` first, which drops and recreates `database/grab-a-court.db`. Any manually created reservations are wiped. Use `make db-seed` directly when you only want to reset demo data.
+- **Frontend checks must use `localhost`:** Vite binds to IPv6 localhost, so `curl http://127.0.0.1:5173` fails. Use `http://localhost:5173`. The API answers on both `http://localhost:3001` and `http://127.0.0.1:3001`.
 - **`ExperimentalWarning: SQLite is an experimental feature` is expected noise** from `node:sqlite` and does not indicate a problem.
 - The DB file is created by seeding; it is not present until you run `make db-seed` (or `make dev`).
 
