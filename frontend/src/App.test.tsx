@@ -69,15 +69,16 @@ describe('App', () => {
     expect(within(theme).getByRole('button', { name: 'Dark mode' })).toBeInTheDocument();
   });
 
-  it('renders a navy navbar with light-on-dark text in either page theme', () => {
+  it('renders a navy navbar with light-on-dark text in either page theme', async () => {
     render(<App />);
 
-    const navbar = screen.getByRole('navigation');
+    const navbar = await screen.findByRole('navigation');
     expect(navbar).toHaveClass('app-navbar', 'navbar-dark');
     expect(navbar).toHaveAttribute('data-bs-theme', 'dark');
     expect(within(navbar).getByText('Grab A Court')).toHaveClass('brand-title');
     expect(within(navbar).getByText('Oak Ridge Tennis Club')).toHaveClass('text-white-50');
     expect(within(navbar).getByRole('group', { name: 'Color theme' })).toBeInTheDocument();
+    expect(await screen.findByText('alex@demo.test')).toBeInTheDocument();
   });
 
   it('loads members and selects the first one by default', async () => {
