@@ -69,6 +69,17 @@ describe('App', () => {
     expect(within(theme).getByRole('button', { name: 'Dark mode' })).toBeInTheDocument();
   });
 
+  it('renders a navy navbar with light-on-dark text in either page theme', () => {
+    render(<App />);
+
+    const navbar = screen.getByRole('navigation');
+    expect(navbar).toHaveClass('app-navbar', 'navbar-dark');
+    expect(navbar).toHaveAttribute('data-bs-theme', 'dark');
+    expect(within(navbar).getByText('Grab A Court')).toHaveClass('brand-title');
+    expect(within(navbar).getByText('Oak Ridge Tennis Club')).toHaveClass('text-white-50');
+    expect(within(navbar).getByRole('group', { name: 'Color theme' })).toBeInTheDocument();
+  });
+
   it('loads members and selects the first one by default', async () => {
     render(<App />);
 

@@ -105,7 +105,7 @@ export default function App() {
 
   return (
     <>
-      <Navbar expand="lg" className="app-navbar mb-4">
+      <Navbar expand="lg" variant="dark" data-bs-theme="dark" className="app-navbar mb-4">
         <Container>
           <Navbar.Brand className="brand-title">
             <i className="bi bi-dribbble me-2" aria-hidden="true" />

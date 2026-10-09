@@ -3,6 +3,7 @@
   --club-green-light: #2d6a4f;
   --club-cream: #f8f6f1;
   --club-gold: #c9a227;
+  --club-navy: #0b1f3a;
 }
 
 body {
@@ -24,8 +25,8 @@ body {
 }
 
 .app-navbar {
-  background: linear-gradient(135deg, var(--club-green) 0%, var(--club-green-light) 100%);
-  box-shadow: 0 2px 12px rgba(27, 77, 62, 0.25);
+  background-color: var(--club-navy);
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--club-navy) 25%, transparent);
 }
 
 .court-card {
