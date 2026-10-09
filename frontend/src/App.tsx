@@ -25,6 +25,7 @@ import { CourtStatusGrid } from './components/CourtStatusGrid';
 import { DemoUserSelector } from './components/DemoUserSelector';
 import { ReservationForm } from './components/ReservationForm';
 import { ReservationList } from './components/ReservationList';
+import { ThemeToggle } from './components/ThemeToggle';
 import type { CourtStatus, CourtStatusView, Member, Reservation } from './types';
 
 function todayString(): string {
@@ -107,12 +108,15 @@ export default function App() {
       <Navbar expand="lg" className="app-navbar mb-4">
         <Container>
           <Navbar.Brand className="brand-title">
-            <i className="bi bi-dribbble me-2" />
+            <i className="bi bi-dribbble me-2" aria-hidden="true" />
             Grab A Court
           </Navbar.Brand>
-          <Navbar.Text className="ms-auto text-white-50">
-            Oak Ridge Tennis Club
-          </Navbar.Text>
+          <div className="ms-auto d-flex align-items-center gap-3">
+            <ThemeToggle />
+            <Navbar.Text className="text-white-50 mb-0">
+              Oak Ridge Tennis Club
+            </Navbar.Text>
+          </div>
         </Container>
       </Navbar>
 
@@ -133,7 +137,7 @@ export default function App() {
                 />
                 {currentUser && (
                   <div className="mt-3">
-                    <Badge bg={isAdmin ? 'dark' : 'primary'} className="me-2">
+                    <Badge bg={isAdmin ? 'secondary' : 'primary'} className="me-2">
                       {currentUser.role}
                     </Badge>
                     <span className="text-muted small">{currentUser.email}</span>
@@ -203,7 +207,7 @@ export default function App() {
         {isAdmin && (
           <Row className="g-4 mt-1">
             <Col>
-              <Card className="shadow-sm border-dark">
+              <Card className="shadow-sm admin-panel-card">
                 <Card.Body>
                   <Card.Title>
                     <i className="bi bi-shield-lock me-2" />
