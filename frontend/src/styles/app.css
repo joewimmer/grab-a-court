@@ -11,6 +11,11 @@ body {
   min-height: 100vh;
 }
 
+[data-bs-theme='dark'] body {
+  background: linear-gradient(180deg, #121a17 0%, #0d1210 100%);
+  color: var(--bs-body-color);
+}
+
 .brand-title {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 700;
@@ -35,13 +40,15 @@ body {
 }
 
 .court-card--maintenance {
-  border-left-color: #ffc107;
-  background-color: #fffdf5;
+  border-left-color: var(--bs-warning);
+  background-color: color-mix(in srgb, var(--bs-warning) 16%, var(--bs-body-bg));
+  color: var(--bs-body-color);
 }
 
 .court-card--unavailable {
-  border-left-color: #dc3545;
-  background-color: #fff8f8;
+  border-left-color: var(--bs-danger);
+  background-color: color-mix(in srgb, var(--bs-danger) 14%, var(--bs-body-bg));
+  color: var(--bs-body-color);
 }
 
 .court-card--available {
@@ -51,7 +58,16 @@ body {
 .court-activity {
   font-size: 0.875rem;
   padding-top: 0.5rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-top: 1px solid color-mix(in srgb, var(--bs-body-color) 12%, transparent);
+}
+
+.admin-panel-card {
+  border-color: var(--club-gold);
+}
+
+.theme-toggle .btn {
+  display: inline-flex;
+  align-items: center;
 }
 
 .card-title {

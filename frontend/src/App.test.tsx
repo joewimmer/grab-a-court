@@ -61,6 +61,14 @@ describe('App', () => {
     vi.clearAllMocks();
   });
 
+  it('shows a color theme toggle in the header', async () => {
+    render(<App />);
+
+    const theme = await screen.findByRole('group', { name: 'Color theme' });
+    expect(within(theme).getByRole('button', { name: 'Light mode' })).toBeInTheDocument();
+    expect(within(theme).getByRole('button', { name: 'Dark mode' })).toBeInTheDocument();
+  });
+
   it('loads members and selects the first one by default', async () => {
     render(<App />);
 

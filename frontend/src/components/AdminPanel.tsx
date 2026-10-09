@@ -72,7 +72,7 @@ export function AdminPanel({ courts, onUpdateStatus }: AdminPanelProps) {
             </Form.Group>
           </Col>
           <Col md={3}>
-            <Button type="submit" variant="dark" disabled={submitting} className="w-100">
+            <Button type="submit" variant="primary" disabled={submitting} className="w-100">
               {submitting ? 'Updating...' : 'Update Status'}
             </Button>
           </Col>
