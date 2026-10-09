@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CourtStatusView, Member, Reservation } from './types';
 
@@ -88,6 +88,43 @@ describe('App', () => {
     render(<App />);
 
     expect(await screen.findByText('Failed to load data')).toBeInTheDocument();
+  });
+
+  it('refreshes booking times without replacing the status board', async () => {
+    mocks.getStoredDemoUser.mockReturnValue(members[0]);
+    render(<App />);
+
+    const heading = await screen.findByText('Court Status Board');
+    const board = heading.closest('.card') as HTMLElement;
+    expect(within(board).getByText('Court 1')).toBeInTheDocument();
+
+    let resolveCourts: (value: CourtStatusView[]) => void = () => {};
+    let resolveReservations: (value: Reservation[]) => void = () => {};
+    mocks.fetchCourtStatus.mockReturnValue(
+      new Promise((resolve) => {
+        resolveCourts = resolve;
+      }),
+    );
+    mocks.fetchReservations.mockReturnValue(
+      new Promise((resolve) => {
+        resolveReservations = resolve;
+      }),
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /refresh times/i }));
+
+    expect(await screen.findByRole('button', { name: /refreshing times/i })).toBeDisabled();
+    expect(within(board).getByText('Court 1')).toBeInTheDocument();
+    expect(within(board).queryByRole('status')).not.toBeInTheDocument();
+
+    resolveCourts(courts);
+    resolveReservations(reservations);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /refresh times/i })).toBeEnabled();
+    });
+    expect(mocks.fetchCourtStatus).toHaveBeenCalled();
+    expect(mocks.fetchReservations).toHaveBeenCalled();
   });
 
   it('filters reservations to the current member for non-admins', async () => {

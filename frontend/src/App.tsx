@@ -40,22 +40,27 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const refreshAvailability = useCallback(async () => {
+    const [courtData, reservationData] = await Promise.all([
+      fetchCourtStatus(selectedDate),
+      fetchReservations(selectedDate),
+    ]);
+    setCourts(courtData);
+    setReservations(reservationData);
+    return { courts: courtData, reservations: reservationData };
+  }, [selectedDate]);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [courtData, reservationData] = await Promise.all([
-        fetchCourtStatus(selectedDate),
-        fetchReservations(selectedDate),
-      ]);
-      setCourts(courtData);
-      setReservations(reservationData);
+      await refreshAvailability();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load data');
     } finally {
       setLoading(false);
     }
-  }, [selectedDate]);
+  }, [refreshAvailability]);
 
   useEffect(() => {
     fetchDemoMembers()
@@ -179,6 +184,7 @@ export default function App() {
                     reservations={reservations}
                     selectedDate={selectedDate}
                     onSubmit={handleCreateReservation}
+                    onRefreshTimes={refreshAvailability}
                   />
                 </Card.Body>
               </Card>

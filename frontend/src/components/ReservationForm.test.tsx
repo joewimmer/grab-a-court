@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { ReservationForm } from './ReservationForm';
+import { ReservationForm, type RefreshedAvailability } from './ReservationForm';
 import type { CourtStatusView, Reservation } from '../types';
 
 const mockCourts: CourtStatusView[] = [
@@ -38,6 +39,44 @@ const mockReservations: Reservation[] = [
   },
 ];
 
+function resolvedRefresh(
+  reservations: Reservation[] = mockReservations,
+  courts: CourtStatusView[] = mockCourts,
+) {
+  return vi.fn().mockResolvedValue({ courts, reservations });
+}
+
+function RefreshHarness({
+  initialReservations = [] as Reservation[],
+  nextReservations,
+  nextCourts = mockCourts,
+}: {
+  initialReservations?: Reservation[];
+  nextReservations: Reservation[];
+  nextCourts?: CourtStatusView[];
+}) {
+  const [reservations, setReservations] = useState(initialReservations);
+  const [courts, setCourts] = useState(mockCourts);
+
+  return (
+    <ReservationForm
+      courts={courts}
+      reservations={reservations}
+      selectedDate="2026-06-15"
+      onSubmit={vi.fn()}
+      onRefreshTimes={async () => {
+        const latest: RefreshedAvailability = {
+          courts: nextCourts,
+          reservations: nextReservations,
+        };
+        setCourts(latest.courts);
+        setReservations(latest.reservations);
+        return latest;
+      }}
+    />
+  );
+}
+
 describe('ReservationForm', () => {
   it('only lists available courts', () => {
     render(
@@ -46,6 +85,7 @@ describe('ReservationForm', () => {
         reservations={mockReservations}
         selectedDate="2026-06-15"
         onSubmit={vi.fn()}
+        onRefreshTimes={resolvedRefresh()}
       />,
     );
 
@@ -63,6 +103,7 @@ describe('ReservationForm', () => {
         reservations={mockReservations}
         selectedDate="2026-06-15"
         onSubmit={vi.fn()}
+        onRefreshTimes={resolvedRefresh()}
       />,
     );
 
@@ -86,6 +127,7 @@ describe('ReservationForm', () => {
         reservations={mockReservations}
         selectedDate="2026-06-15"
         onSubmit={onSubmit}
+        onRefreshTimes={resolvedRefresh()}
       />,
     );
 
@@ -98,11 +140,13 @@ describe('ReservationForm', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /book court/i }));
 
-    expect(onSubmit).toHaveBeenCalledWith({
-      court_id: 1,
-      reservation_date: '2026-06-15',
-      start_time: '10:00',
-      end_time: '11:00',
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({
+        court_id: 1,
+        reservation_date: '2026-06-15',
+        start_time: '10:00',
+        end_time: '11:00',
+      });
     });
   });
 
@@ -115,6 +159,7 @@ describe('ReservationForm', () => {
         reservations={mockReservations}
         selectedDate="2026-06-15"
         onSubmit={onSubmit}
+        onRefreshTimes={resolvedRefresh()}
       />,
     );
 
@@ -145,6 +190,7 @@ describe('ReservationForm', () => {
         reservations={fullDay}
         selectedDate="2026-06-15"
         onSubmit={vi.fn()}
+        onRefreshTimes={resolvedRefresh(fullDay)}
       />,
     );
 
@@ -163,6 +209,7 @@ describe('ReservationForm', () => {
         reservations={mockReservations}
         selectedDate="2026-06-15"
         onSubmit={vi.fn()}
+        onRefreshTimes={resolvedRefresh()}
       />,
     );
 
@@ -180,6 +227,7 @@ describe('ReservationForm', () => {
         reservations={[]}
         selectedDate="2026-06-15"
         onSubmit={vi.fn()}
+        onRefreshTimes={resolvedRefresh([])}
       />,
     );
 
@@ -206,11 +254,185 @@ describe('ReservationForm', () => {
         reservations={blockMorning}
         selectedDate="2026-06-15"
         onSubmit={vi.fn()}
+        onRefreshTimes={resolvedRefresh(blockMorning)}
       />,
     );
 
     await waitFor(() => {
       expect(screen.getByLabelText('Start Time')).not.toHaveValue('07:00');
     });
+  });
+
+  it('shows a loading state while refreshing times', async () => {
+    let resolveRefresh: (value: RefreshedAvailability) => void = () => {};
+    const onRefreshTimes = vi.fn(
+      () =>
+        new Promise<RefreshedAvailability>((resolve) => {
+          resolveRefresh = resolve;
+        }),
+    );
+
+    render(
+      <ReservationForm
+        courts={mockCourts}
+        reservations={mockReservations}
+        selectedDate="2026-06-15"
+        onSubmit={vi.fn()}
+        onRefreshTimes={onRefreshTimes}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh times/i }));
+
+    const refreshingButton = await screen.findByRole('button', { name: /refreshing times/i });
+    expect(refreshingButton).toBeDisabled();
+    expect(refreshingButton).toHaveAttribute('aria-busy', 'true');
+    expect(screen.getByRole('button', { name: /book court/i })).toBeDisabled();
+
+    resolveRefresh({ courts: mockCourts, reservations: mockReservations });
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /refresh times/i })).toBeEnabled();
+    });
+  });
+
+  it('keeps the court and time when a refresh leaves the slot open', async () => {
+    const onRefreshTimes = resolvedRefresh();
+
+    render(
+      <ReservationForm
+        courts={mockCourts}
+        reservations={mockReservations}
+        selectedDate="2026-06-15"
+        onSubmit={vi.fn()}
+        onRefreshTimes={onRefreshTimes}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText('Start Time'), { target: { value: '10:00' } });
+    fireEvent.change(screen.getByLabelText('End Time'), { target: { value: '11:00' } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh times/i }));
+
+    await waitFor(() => expect(onRefreshTimes).toHaveBeenCalledOnce());
+    expect(screen.getByLabelText('Court')).toHaveValue('1');
+    expect(screen.getByLabelText('Start Time')).toHaveValue('10:00');
+    expect(screen.getByLabelText('End Time')).toHaveValue('11:00');
+    expect(screen.queryByText(/no longer available/i)).not.toBeInTheDocument();
+  });
+
+  it('clears a selected time that another member already booked', async () => {
+    const taken: Reservation[] = [
+      {
+        id: 2,
+        court_id: 1,
+        member_id: 2,
+        reservation_date: '2026-06-15',
+        start_time: '10:00',
+        end_time: '11:00',
+        status: 'confirmed',
+        court_name: 'Court 1',
+        member_name: 'Jordan Kim',
+      },
+    ];
+
+    render(<RefreshHarness nextReservations={taken} />);
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText('Start Time'), { target: { value: '10:00' } });
+    fireEvent.change(screen.getByLabelText('End Time'), { target: { value: '11:00' } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh times/i }));
+
+    expect(
+      await screen.findByText('That time is no longer available. Choose another open slot.'),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText('Court')).toHaveValue('1');
+    expect(screen.getByLabelText('Start Time')).toHaveValue('');
+
+    const startValues = Array.from(
+      screen.getByLabelText('Start Time').querySelectorAll('option'),
+    ).map((option) => option.textContent);
+    expect(startValues).not.toContain('10:00');
+    expect(startValues).toContain('09:00');
+  });
+
+  it('clears only the end time when the start is still open', async () => {
+    const taken: Reservation[] = [
+      {
+        id: 3,
+        court_id: 1,
+        member_id: 2,
+        reservation_date: '2026-06-15',
+        start_time: '11:00',
+        end_time: '12:00',
+        status: 'confirmed',
+        court_name: 'Court 1',
+        member_name: 'Jordan Kim',
+      },
+    ];
+
+    render(<RefreshHarness nextReservations={taken} />);
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText('Start Time'), { target: { value: '10:00' } });
+    fireEvent.change(screen.getByLabelText('End Time'), { target: { value: '12:00' } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh times/i }));
+
+    expect(
+      await screen.findByText(
+        'That end time is no longer available. Choose another open slot.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText('Court')).toHaveValue('1');
+    expect(screen.getByLabelText('Start Time')).toHaveValue('10:00');
+    expect(screen.getByLabelText('End Time')).toHaveValue('');
+
+    const endValues = Array.from(
+      screen.getByLabelText('End Time').querySelectorAll('option'),
+    ).map((option) => option.textContent);
+    expect(endValues).not.toContain('12:00');
+    expect(endValues).toContain('11:00');
+  });
+
+  it('clears the court when a refresh shows it is no longer bookable', async () => {
+    const closedCourts = mockCourts.map((court) =>
+      court.id === 1 ? { ...court, status: 'maintenance' as const } : court,
+    );
+
+    render(<RefreshHarness nextReservations={[]} nextCourts={closedCourts} />);
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh times/i }));
+
+    expect(
+      await screen.findByText('That court is no longer available. Choose another court.'),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText('Court')).toHaveValue('');
+    expect(screen.getByLabelText('Start Time')).toBeDisabled();
+  });
+
+  it('keeps the current selection when refreshing times fails', async () => {
+    const onRefreshTimes = vi.fn().mockRejectedValue(new Error('Failed to refresh times'));
+
+    render(
+      <ReservationForm
+        courts={mockCourts}
+        reservations={[]}
+        selectedDate="2026-06-15"
+        onSubmit={vi.fn()}
+        onRefreshTimes={onRefreshTimes}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText('Start Time'), { target: { value: '10:00' } });
+    fireEvent.change(screen.getByLabelText('End Time'), { target: { value: '11:00' } });
+    fireEvent.click(screen.getByRole('button', { name: /refresh times/i }));
+
+    expect(await screen.findByText('Failed to refresh times')).toBeInTheDocument();
+    expect(screen.getByLabelText('Court')).toHaveValue('1');
+    expect(screen.getByLabelText('Start Time')).toHaveValue('10:00');
+    expect(screen.getByLabelText('End Time')).toHaveValue('11:00');
   });
 });

@@ -31,7 +31,7 @@ Location: `frontend/src/**/*.test.tsx`
 ### Component Tests
 
 - `CourtStatusGrid.test.tsx` - renders courts, shows active reservations and maintenance status
-- `ReservationForm.test.tsx` - filters available courts and submits booking data
+- `ReservationForm.test.tsx` - filters available courts, submits booking data, and refreshes open times
 
 Frontend tests use Vitest with jsdom and React Testing Library.
 
