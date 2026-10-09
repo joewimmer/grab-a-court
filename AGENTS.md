@@ -179,6 +179,7 @@ No real login. The frontend stores the selected demo user in `localStorage` and 
 When changing booking logic, preserve these rules:
 
 - Operating hours: **07:00 to 21:00**
+- A single reservation cannot be longer than **3 hours** (exactly 3 hours is allowed)
 - No overlapping reservations on the same court
 - Courts in `maintenance` or `unavailable` cannot be booked
 - Members cancel their own reservations; admins cancel any

@@ -65,6 +65,7 @@ flowchart LR
 ## Business Rules
 
 - Operating hours: 07:00 to 21:00
+- A single reservation cannot be longer than 3 hours (exactly 3 hours is allowed)
 - No overlapping reservations on the same court
 - Courts in `maintenance` or `unavailable` status cannot be booked
 - Members can cancel their own reservations; admins can cancel any reservation

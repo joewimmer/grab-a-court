@@ -1,4 +1,4 @@
-import { OPERATING_HOURS } from '../config.js';
+import { MAX_BOOKING_MINUTES, OPERATING_HOURS } from '../config.js';
 import { getCourtById, updateCourtStatus } from '../repositories/courtRepository.js';
 import { getMemberById } from '../repositories/memberRepository.js';
 import {
@@ -46,6 +46,13 @@ export function validateTimeRange(startTime: string, endTime: string): void {
   if (start < open || end > close) {
     throw new BookingError(
       `Reservations must be between ${OPERATING_HOURS.open} and ${OPERATING_HOURS.close}.`,
+    );
+  }
+
+  if (end - start > MAX_BOOKING_MINUTES) {
+    const maxHours = MAX_BOOKING_MINUTES / 60;
+    throw new BookingError(
+      `Reservations cannot be longer than ${maxHours} hours.`,
     );
   }
 }

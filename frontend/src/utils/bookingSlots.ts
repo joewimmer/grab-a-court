@@ -1,5 +1,8 @@
 import type { Reservation } from '../types';
 
+/** Longest single reservation, in minutes. Exactly this length is allowed. */
+export const MAX_BOOKING_MINUTES = 3 * 60;
+
 export const TIME_SLOTS = [
   '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
   '13:00', '14:00', '15:00', '16:00', '17:00', '18:00',
@@ -27,6 +30,11 @@ function getCourtReservations(
   );
 }
 
+function timeToMinutes(time: string): number {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
 function rangeOverlapsReservation(
   startTime: string,
   endTime: string,
@@ -42,6 +50,19 @@ function rangeOverlapsReservation(
   );
 }
 
+function isBookableRange(
+  startTime: string,
+  endTime: string,
+  reservations: Reservation[],
+): boolean {
+  const duration = timeToMinutes(endTime) - timeToMinutes(startTime);
+  return (
+    duration > 0 &&
+    duration <= MAX_BOOKING_MINUTES &&
+    !rangeOverlapsReservation(startTime, endTime, reservations)
+  );
+}
+
 export function getAvailableStartTimes(
   courtId: number,
   reservationDate: string,
@@ -53,13 +74,11 @@ export function getAvailableStartTimes(
     reservations,
   );
 
-  return TIME_SLOTS.filter((startTime) => {
-    const laterSlots = TIME_SLOTS.filter((endTime) => endTime > startTime);
-    return laterSlots.some(
-      (endTime) =>
-        !rangeOverlapsReservation(startTime, endTime, courtReservations),
-    );
-  });
+  return TIME_SLOTS.filter((startTime) =>
+    TIME_SLOTS.some((endTime) =>
+      isBookableRange(startTime, endTime, courtReservations),
+    ),
+  );
 }
 
 export function getAvailableEndTimes(
@@ -74,9 +93,7 @@ export function getAvailableEndTimes(
     reservations,
   );
 
-  return TIME_SLOTS.filter(
-    (endTime) =>
-      endTime > startTime &&
-      !rangeOverlapsReservation(startTime, endTime, courtReservations),
+  return TIME_SLOTS.filter((endTime) =>
+    isBookableRange(startTime, endTime, courtReservations),
   );
 }

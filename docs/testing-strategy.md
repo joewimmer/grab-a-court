@@ -11,6 +11,7 @@ Location: `backend/src/**/*.test.ts`
 ### Unit Tests (`bookingService.test.ts`)
 
 - Time range validation within operating hours
+- Maximum booking length of 3 hours
 - Overlap detection for reservations
 - Maintenance court booking rejection
 

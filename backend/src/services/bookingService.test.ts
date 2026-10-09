@@ -49,6 +49,17 @@ describe('bookingService', () => {
     it('accepts valid time ranges', () => {
       expect(() => validateTimeRange('09:00', '10:30')).not.toThrow();
     });
+
+    it('rejects reservations longer than 3 hours', () => {
+      expect(() => validateTimeRange('09:00', '12:30')).toThrow(
+        'cannot be longer than 3 hours',
+      );
+      expect(() => validateTimeRange('07:00', '11:00')).toThrow(BookingError);
+    });
+
+    it('accepts a reservation of exactly 3 hours', () => {
+      expect(() => validateTimeRange('09:00', '12:00')).not.toThrow();
+    });
   });
 
   describe('validateReservationInput', () => {
@@ -152,6 +163,29 @@ describe('bookingService', () => {
           end_time: '10:30',
         }),
       ).toThrow('already has a reservation');
+    });
+
+    it('rejects reservations longer than 3 hours', () => {
+      expect(() =>
+        createMemberReservation(MEMBER_ID, {
+          court_id: 1,
+          reservation_date: '2026-06-15',
+          start_time: '09:00',
+          end_time: '13:00',
+        }),
+      ).toThrow('cannot be longer than 3 hours');
+    });
+
+    it('creates a reservation of exactly 3 hours', () => {
+      const reservation = createMemberReservation(MEMBER_ID, {
+        court_id: 1,
+        reservation_date: '2026-06-15',
+        start_time: '09:00',
+        end_time: '12:00',
+      });
+      expect(reservation.start_time).toBe('09:00');
+      expect(reservation.end_time).toBe('12:00');
+      expect(reservation.status).toBe('confirmed');
     });
 
     it('rejects reservations on maintenance courts', () => {

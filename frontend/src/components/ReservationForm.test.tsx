@@ -106,6 +106,52 @@ describe('ReservationForm', () => {
     });
   });
 
+  it('does not offer end times more than 3 hours after the start', () => {
+    render(
+      <ReservationForm
+        courts={mockCourts}
+        reservations={[]}
+        selectedDate="2026-06-15"
+        onSubmit={vi.fn()}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText('Start Time'), {
+      target: { value: '07:00' },
+    });
+
+    const endOptions = screen
+      .getByLabelText('End Time')
+      .querySelectorAll('option');
+    const endValues = Array.from(endOptions).map((option) => option.textContent);
+
+    expect(endValues).toEqual(['08:00', '09:00', '10:00']);
+    expect(endValues).not.toContain('11:00');
+  });
+
+  it('shows the API error when a booking is rejected', async () => {
+    const onSubmit = vi
+      .fn()
+      .mockRejectedValue(new Error('Reservations cannot be longer than 3 hours.'));
+
+    render(
+      <ReservationForm
+        courts={mockCourts}
+        reservations={[]}
+        selectedDate="2026-06-15"
+        onSubmit={onSubmit}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Court'), { target: { value: '1' } });
+    fireEvent.click(screen.getByRole('button', { name: /book court/i }));
+
+    expect(
+      await screen.findByText('Reservations cannot be longer than 3 hours.'),
+    ).toBeInTheDocument();
+  });
+
   it('shows an error when submission fails', async () => {
     const onSubmit = vi.fn().mockRejectedValue(new Error('Court already booked'));
 

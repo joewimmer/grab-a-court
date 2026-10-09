@@ -92,6 +92,38 @@ describe('API', () => {
     expect(response.body.error).toMatch(/status is required/i);
   });
 
+  it('rejects reservations longer than 3 hours', async () => {
+    const app = createApp();
+    const response = await request(app)
+      .post('/api/reservations')
+      .set('X-Demo-User-Id', '1')
+      .send({
+        court_id: 1,
+        reservation_date: '2026-06-20',
+        start_time: '09:00',
+        end_time: '13:00',
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toMatch(/cannot be longer than 3 hours/);
+  });
+
+  it('accepts a reservation of exactly 3 hours', async () => {
+    const app = createApp();
+    const response = await request(app)
+      .post('/api/reservations')
+      .set('X-Demo-User-Id', '1')
+      .send({
+        court_id: 1,
+        reservation_date: '2026-06-20',
+        start_time: '09:00',
+        end_time: '12:00',
+      });
+
+    expect(response.status).toBe(201);
+    expect(response.body.reservation.end_time).toBe('12:00');
+  });
+
   it('returns a booking error when creating an invalid reservation', async () => {
     const app = createApp();
     const response = await request(app)

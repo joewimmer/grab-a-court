@@ -55,6 +55,16 @@ describe('bookingSlots', () => {
     expect(endsFromTen).not.toContain('12:00');
   });
 
+  it('limits end times to a 3 hour block', () => {
+    const ends = getAvailableEndTimes(2, '07:00', '2026-06-15', []);
+    expect(ends).toEqual(['08:00', '09:00', '10:00']);
+    expect(ends).not.toContain('11:00');
+
+    const exactThreeHours = getAvailableEndTimes(2, '18:00', '2026-06-15', []);
+    expect(exactThreeHours).toContain('21:00');
+    expect(exactThreeHours).not.toContain('22:00');
+  });
+
   it('ignores reservations from other dates', () => {
     const starts = getAvailableStartTimes(1, '2026-06-16', reservations);
     expect(starts).toContain('09:00');
