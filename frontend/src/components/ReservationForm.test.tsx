@@ -289,12 +289,14 @@ describe('ReservationForm', () => {
     expect(refreshingButton).toBeDisabled();
     expect(refreshingButton).toHaveAttribute('aria-busy', 'true');
     expect(screen.getByRole('button', { name: /book court/i })).toBeDisabled();
+    expect(screen.getByLabelText('Court')).toBeDisabled();
 
     resolveRefresh({ courts: mockCourts, reservations: mockReservations });
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /refresh times/i })).toBeEnabled();
     });
+    expect(screen.getByLabelText('Court')).toBeEnabled();
   });
 
   it('keeps the court and time when a refresh leaves the slot open', async () => {

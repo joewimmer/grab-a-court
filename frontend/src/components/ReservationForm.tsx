@@ -237,6 +237,7 @@ export function ReservationForm({
               value={courtId}
               onChange={(e) => handleCourtChange(e.target.value)}
               required
+              disabled={refreshing}
             >
               <option value="">Select court</option>
               {availableCourts.map((court) => (

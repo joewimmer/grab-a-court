@@ -90,6 +90,23 @@ describe('App', () => {
     expect(await screen.findByText('Failed to load data')).toBeInTheDocument();
   });
 
+  it('clears a stale board error after refreshing times succeeds', async () => {
+    mocks.getStoredDemoUser.mockReturnValue(members[0]);
+    mocks.fetchCourtStatus.mockRejectedValueOnce(new Error('Failed to load data'));
+    render(<App />);
+
+    const heading = await screen.findByText('Court Status Board');
+    const board = heading.closest('.card') as HTMLElement;
+    expect(within(board).getByText('Failed to load data')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /refresh times/i }));
+
+    await waitFor(() => {
+      expect(within(board).queryByText('Failed to load data')).not.toBeInTheDocument();
+    });
+    expect(within(board).getByText('Court 1')).toBeInTheDocument();
+  });
+
   it('refreshes booking times without replacing the status board', async () => {
     mocks.getStoredDemoUser.mockReturnValue(members[0]);
     render(<App />);

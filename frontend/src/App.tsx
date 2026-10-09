@@ -47,6 +47,7 @@ export default function App() {
     ]);
     setCourts(courtData);
     setReservations(reservationData);
+    setError(null);
     return { courts: courtData, reservations: reservationData };
   }, [selectedDate]);
 
